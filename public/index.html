@@ -438,7 +438,7 @@
   <div class="grid grid-cols-[1.55fr,1fr] gap-4 mb-4">
     <!-- Projected Leader (big) - Bertin-inspired clear encoding: position/size for leading %, hue for party, value for official vs proj distinction -->
     <div class="card card-raised px-7 py-6">
-      <div class="eyebrow" style="color:var(--gold); margin-bottom:6px;">LÍDER PROYECTADO</div>
+      <div class="eyebrow" style="color:var(--gold); margin-bottom:6px;">GANADOR OFICIAL — RESULTADOS FINALES ANUNCIADOS</div>
       <div class="flex items-start gap-5">
         <div id="leader-color-bar" style="width:8px; align-self:stretch; border-radius:4px; background:var(--p-pacto); box-shadow:var(--glow); margin-top:4px;"></div>
         <div class="flex-1 min-w-0">
@@ -558,8 +558,23 @@
     <!-- X PRIMARY FEED (PROMINENT) -->
     <div class="card p-5 flex flex-col min-h-0">
       <div class="flex items-center justify-between mb-3">
-        <div class="eyebrow">FUENTE PRIMARIA X</div>
-        <span class="chip" style="font-size:8.5px;">X · ⟳ heavy every 15m</span>
+        <div class="eyebrow">ARCHIVO POST-ELECCIONES: REVISIÓN DE SEÑALES X</div>
+        <span class="chip" style="font-size:8.5px;">Búsqueda para accountability · Compara señales X vs resultados finales oficiales</span>
+      </div>
+      <!-- Post Review Search Controls -->
+      <div class="mb-3">
+        <input id="x-search" type="text" placeholder="Buscar posts (ej: Westcol, testigos, Suba, irregularidades...)" 
+               class="w-full px-3 py-1.5 text-sm bg-[var(--surface)] border border-[var(--border)] rounded-lg focus:outline-none focus:border-[var(--emerald)]" 
+               oninput="filterXPosts()">
+        <div class="flex flex-wrap gap-1 mt-2 text-[9px]">
+          <button onclick="quickFilterX('Westcol')" class="px-2 py-0.5 bg-[var(--surface-2)] border border-[var(--border)] rounded hover:bg-[var(--emerald-bg)]">Westcol</button>
+          <button onclick="quickFilterX('testigos')" class="px-2 py-0.5 bg-[var(--surface-2)] border border-[var(--border)] rounded hover:bg-[var(--emerald-bg)]">Testigos</button>
+          <button onclick="quickFilterX('jóvenes')" class="px-2 py-0.5 bg-[var(--surface-2)] border border-[var(--border)] rounded hover:bg-[var(--emerald-bg)]">Jóvenes</button>
+          <button onclick="quickFilterX('costa')" class="px-2 py-0.5 bg-[var(--surface-2)] border border-[var(--border)] rounded hover:bg-[var(--emerald-bg)]">Costa</button>
+          <button onclick="quickFilterX('irregularidades')" class="px-2 py-0.5 bg-[var(--surface-2)] border border-[var(--border)] rounded hover:bg-[var(--emerald-bg)]">Irregularidades</button>
+          <button onclick="quickFilterX('Suba')" class="px-2 py-0.5 bg-[var(--surface-2)] border border-[var(--border)] rounded hover:bg-[var(--emerald-bg)]">Suba/Usme</button>
+          <button onclick="clearXFilters()" class="px-2 py-0.5 text-[var(--dim)] hover:text-[var(--ink)]">Limpiar</button>
+        </div>
       </div>
       <div id="x-signal-graphic" class="mb-3 p-2 bg-[var(--surface)] rounded-lg border border-[var(--border)]"></div>
       <div id="x-feed" class="flex-1 min-h-0 overflow-y-auto space-y-2.5 pr-1 text-[13px]" style="scrollbar-width:thin;"></div>
@@ -694,7 +709,9 @@ let state = {
   tick: 0,
   lastUpdate: 0,
   feed: [],
-  postSortMode: 'recency'   // 'recency' | 'engagement'
+  postSortMode: 'recency',   // 'recency' | 'engagement'
+  xSearchTerm: '',
+  xActiveFilters: []
 };
 
 // Bilingual strings (exact from data.js + heavy updates)
@@ -1427,52 +1444,105 @@ function renderXFeed() {
   const container = document.getElementById('x-feed');
   if (!container) return;
 
-  // Sort posts based on current mode (recency prioritized by default)
-  let sortedPosts = [...region.posts];
-  if (state.postSortMode === 'engagement') {
-    sortedPosts.sort((a, b) => (b.likes || 0) - (a.likes || 0));
-  } else {
-    // Default: recency (higher recency value = more recent)
-    sortedPosts.sort((a, b) => (b.recency || 0) - (a.recency || 0));
+  let filteredPosts = [...region.posts];
+
+  // Apply search and tag filters for Post Review Search
+  const term = (state.xSearchTerm || '').toLowerCase();
+  if (term) {
+    filteredPosts = filteredPosts.filter(p => 
+      (p.es && p.es.toLowerCase().includes(term)) || 
+      (p.en && p.en.toLowerCase().includes(term)) ||
+      (p.author && p.author.toLowerCase().includes(term))
+    );
   }
-  sortedPosts = sortedPosts.slice(0, 6);
+
+  if (state.xActiveFilters && state.xActiveFilters.length > 0) {
+    filteredPosts = filteredPosts.filter(p => {
+      const text = ((p.es || '') + ' ' + (p.en || '')).toLowerCase();
+      return state.xActiveFilters.some(f => text.includes(f.toLowerCase()));
+    });
+  }
+
+  // Sort 
+  if (state.postSortMode === 'engagement') {
+    filteredPosts.sort((a, b) => (b.likes || 0) - (a.likes || 0));
+  } else {
+    filteredPosts.sort((a, b) => (b.recency || 0) - (a.recency || 0));
+  }
+
+  // In post-election review mode, show more posts (up to 12)
+  const maxPosts = (state.xSearchTerm || (state.xActiveFilters && state.xActiveFilters.length > 0)) ? 12 : 6;
+  filteredPosts = filteredPosts.slice(0, maxPosts);
 
   const controls = `
     <div class="flex items-center gap-2 mb-2 text-[10px]">
       <button onclick="setPostSortMode('recency')" class="px-2 py-0.5 rounded ${state.postSortMode === 'recency' ? 'bg-[var(--emerald-bg)] text-[var(--ink)]' : 'border border-[var(--border)]'}">Más Recientes</button>
       <button onclick="setPostSortMode('engagement')" class="px-2 py-0.5 rounded ${state.postSortMode === 'engagement' ? 'bg-[var(--emerald-bg)] text-[var(--ink)]' : 'border border-[var(--border)]'}">Mayor Engagement</button>
+      <span class="ml-auto text-[var(--dim)]">${filteredPosts.length} posts mostrados</span>
     </div>`;
 
   let html = controls;
 
-  html += sortedPosts.map(post => {
-    const text = state.lang === 'es' ? post.es : post.en;
-    const verif = post.v ? 
-      `<span class="chip py-px px-2 text-[9px]" style="color:var(--good);border-color:var(--border-2);">${t('verified')}</span>` : 
-      `<span class="chip py-px px-2 text-[9px]" style="color:var(--warn);border-color:var(--border-2);">${t('newPost')}</span>`;
-    const likes = post.likes || Math.floor(800 + Math.random() * 1800);
-    const timeLabel = post.recency ? `${post.recency} min ago` : `07:${String(20 + Math.floor(Math.random()*37)).padStart(2,'0')}`;
-    return `
-      <div class="x-post bg-[var(--surface-2)] rounded-xl p-3 border border-[var(--border)]">
-        <div class="flex items-start gap-2.5">
-          <div class="w-6 h-6 rounded-full bg-[var(--border)] flex-shrink-0 flex items-center justify-center text-[10px] mt-0.5">𝕏</div>
-          <div class="flex-1 min-w-0">
-            <div class="flex items-center gap-2">
-              <span class="font-semibold text-sm">${post.author}</span>
-              <span class="text-[var(--dim)] text-xs">${post.handle}</span>
-              ${verif}
-            </div>
-            <div class="text-[var(--ink-2)] leading-snug mt-1 text-[13px]">${text}</div>
-            <div class="flex items-center gap-3 mt-1.5 text-[10px] text-[var(--dim)]">
-              <span><i class="fa-solid fa-heart mr-1 text-[var(--bad)]"></i> ${likes}</span>
-              <span class="font-mono">${timeLabel}</span>
+  if (filteredPosts.length === 0) {
+    html += `<div class="text-[var(--dim)] text-sm p-4 text-center">No se encontraron posts con los filtros actuales.</div>`;
+  } else {
+    html += filteredPosts.map(post => {
+      const text = state.lang === 'es' ? post.es : post.en;
+      const verif = post.v ? 
+        `<span class="chip py-px px-2 text-[9px]" style="color:var(--good);border-color:var(--border-2);">${t('verified')}</span>` : 
+        `<span class="chip py-px px-2 text-[9px]" style="color:var(--warn);border-color:var(--border-2);">${t('newPost')}</span>`;
+      const likes = post.likes || Math.floor(800 + Math.random() * 1800);
+      const timeLabel = post.recency ? `${post.recency} min ago` : `07:${String(20 + Math.floor(Math.random()*37)).padStart(2,'0')}`;
+      return `
+        <div class="x-post bg-[var(--surface-2)] rounded-xl p-3 border border-[var(--border)]">
+          <div class="flex items-start gap-2.5">
+            <div class="w-6 h-6 rounded-full bg-[var(--border)] flex-shrink-0 flex items-center justify-center text-[10px] mt-0.5">𝕏</div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2">
+                <span class="font-semibold text-sm">${post.author}</span>
+                <span class="text-[var(--dim)] text-xs">${post.handle}</span>
+                ${verif}
+              </div>
+              <div class="text-[var(--ink-2)] leading-snug mt-1 text-[13px]">${text}</div>
+              <div class="flex items-center gap-3 mt-1.5 text-[10px] text-[var(--dim)]">
+                <span><i class="fa-solid fa-heart mr-1 text-[var(--bad)]"></i> ${likes}</span>
+                <span class="font-mono">${timeLabel}</span>
+              </div>
             </div>
           </div>
-        </div>
-      </div>`;
-  }).join('');
+        </div>`;
+    }).join('');
+  }
 
   container.innerHTML = html;
+}
+
+function filterXPosts() {
+  const input = document.getElementById('x-search');
+  if (input) {
+    state.xSearchTerm = input.value;
+  }
+  renderXFeed();
+}
+
+function quickFilterX(term) {
+  if (!state.xActiveFilters) state.xActiveFilters = [];
+  if (!state.xActiveFilters.includes(term)) {
+    state.xActiveFilters.push(term);
+  }
+  // Also set the search input for visibility
+  const input = document.getElementById('x-search');
+  if (input) input.value = term;
+  state.xSearchTerm = term;
+  renderXFeed();
+}
+
+function clearXFilters() {
+  state.xSearchTerm = '';
+  state.xActiveFilters = [];
+  const input = document.getElementById('x-search');
+  if (input) input.value = '';
+  renderXFeed();
 }
 
 function setPostSortMode(mode) {
