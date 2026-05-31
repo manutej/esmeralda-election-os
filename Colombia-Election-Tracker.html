@@ -394,7 +394,18 @@
     </div>
   </div>
 
-  <!-- BOTTOM: RESULTS TABLE + REASONING -->
+  <!-- PREVIEW: Bertin-enhanced visuals (per Semiology of Graphics: use position/size for quantities, color hue for categories, value/texture for official vs X distinction. Avoid text dominance; direct retinal encoding for standings, sentiment overlays, live updates) -->
+  <div id="bertin-preview" class="card p-5 mb-4" style="display: none;">
+    <div class="eyebrow mb-2" style="color: var(--gold);">PREVIEW · BERTIN SEMIOLOGY OF GRAPHICS</div>
+    <div class="text-sm mb-3">Clearer diagrams for Official vs X-Projected (position + size for magnitude per Bertin Ch. on diagrams). Sentiment overlays and live candidate standings using retinal variables.</div>
+    <div id="bertin-graphs" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <!-- Subagent will populate: paired comparison diagrams, geographic encodings, etc. -->
+      <div class="p-3 border border-[var(--border)] rounded">Official vs X Projection (Bertin diagram placeholder)</div>
+      <div class="p-3 border border-[var(--border)] rounded">Live Sentiment Overlay + Geo Pulse (enhanced map)</div>
+    </div>
+  </div>
+
+<!-- BOTTOM: RESULTS TABLE + REASONING -->
   <div class="grid grid-cols-[1.62fr,1fr] gap-4">
     
     <!-- Results Table -->
