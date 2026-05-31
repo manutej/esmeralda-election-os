@@ -1,18 +1,9 @@
 {
+  "framework": null,
+  "buildCommand": "echo 'Static deployment - serving ESMERALDA tracker'",
+  "outputDirectory": "public",
   "rewrites": [
-    // CRITICAL: Serve the high-fidelity CETI standalone tracker (public/index.html) at the production root URL.
-    // This ensures https://your-vercel-domain.vercel.app/ shows the beautiful bilingual Colombia Election Tracker
-    // exactly as the citizen deliverable. The Next.js app shell is bypassed at "/" while /api/* routes remain functional.
     { "source": "/", "destination": "/index.html" }
-  ],
-  "crons": [
-    // DISABLED by default for cost reasons on election day.
-    // The heavy Grok synthesis seed (loaded statically) is the recommended fast/cheap path.
-    // Uncomment only if you explicitly want automatic expensive refreshes.
-    // {
-    //   "path": "/api/ingest?region=colombia&secret=YOUR_INGEST_SECRET",
-    //   "schedule": "*/12 * * * *"
-    // }
   ],
   "headers": [
     {
@@ -29,7 +20,6 @@
       ]
     }
   ],
-  // Production election-day configuration
   "trailingSlash": false,
   "cleanUrls": true
 }

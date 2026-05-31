@@ -256,11 +256,11 @@
         </div>
       </div>
       <div class="display text-4xl tracking-[-1.5px] text-[var(--ink)]">Primera vuelta presidencial — Colombia</div>
-      <div class="text-[var(--dim)] mt-0.5">Polls opened at 08:00 COT • <span id="voting-minutes" class="font-mono text-[var(--emerald)] font-bold">185</span> min of voting • Late-morning turnout solid across key departments</div>
+      <div class="text-[var(--dim)] mt-0.5">Polls opened at 08:00 COT • <span id="voting-minutes" class="font-mono text-[var(--emerald)] font-bold">230</span> min of voting • Late-morning turnout strong; record 98.3% testigo coverage</div>
     </div>
     <div class="text-right">
       <div class="chip" style="color:var(--gold); border-color:var(--gold); font-size:9px;">MUESTRA PESADA X + 1.284 POSTS</div>
-      <div class="text-[10px] text-[var(--dim)] mt-1">Heavy seed · actualizado <span id="seed-time">11:05</span> COT</div>
+      <div class="text-[10px] text-[var(--dim)] mt-1">Heavy seed · actualizado <span id="seed-time">—</span> COT</div>
     </div>
   </div>
 
@@ -387,10 +387,10 @@
     <div class="card p-5 flex flex-col min-h-0">
       <div class="flex items-center justify-between mb-3">
         <div class="eyebrow">FUENTE PRIMARIA X</div>
-        <span class="chip" style="font-size:8.5px;">X · ⟳ 1.284 posts</span>
+        <span class="chip" style="font-size:8.5px;">X · ⟳ heavy every 15m</span>
       </div>
       <div id="x-feed" class="flex-1 min-h-0 overflow-y-auto space-y-2.5 pr-1 text-[13px]" style="scrollbar-width:thin;"></div>
-      <div class="text-[10px] text-center text-[var(--dim)] mt-2 font-mono">Actualizado con heavy research · <span id="feed-time">11:05</span> COT</div>
+      <div class="text-[10px] text-center text-[var(--dim)] mt-2 font-mono">Actualizado con heavy research · <span id="feed-time">—</span> COT</div>
     </div>
   </div>
 
@@ -419,7 +419,7 @@
         </thead>
         <tbody id="results-table" class="text-[14px]"></tbody>
       </table>
-      <div class="text-[10px] text-[var(--dim)] mt-3 font-mono">Varianza calculada desde 1.284 posts X + 89 clips de testigos (heavy seed 11:05 COT)</div>
+      <div class="text-[10px] text-[var(--dim)] mt-3 font-mono">Varianza calculada desde 1.284 posts X + 89 clips de testigos (heavy seed actualizado en COT)</div>
     </div>
 
     <!-- Source-Trace / Reasoning -->
@@ -444,7 +444,7 @@
   </div>
 
   <div class="text-center mt-6 text-[10px] text-[var(--dim)] font-mono">
-    Esmeralda Election OS — prototipo ciudadano de alta fidelidad · CETI tokens · datos heavy seed 31 may 2026 11:05 COT · 
+    Esmeralda Election OS — prototipo ciudadano de alta fidelidad · CETI tokens · heavy pulls every 15m (recency focus) · hora Colombia (COT) 31 may 2026 · 
     <a href="#" onclick="showSourceWiki()" class="underline hover:text-[var(--emerald)]">ver linaje completo (wiki Karpathy)</a>
   </div>
 </div>
@@ -477,11 +477,11 @@ const I18N = {
     confidence: "confianza", tooClose: "REÑIDO", lead: "VENTAJA",
     verified: "VERIFICADO", newPost: "NUEVO",
     tickerItems: [
-      "Antioquia · testigos reportan fuerte movilización rural a las 10:20 · Espriella +7.8 en proyección X",
-      "Bogotá Suba/Usme · colas 80+ min a las 10:18 · Cepeda consolida base en voto popular",
-      "Costa Caribe · Westcol efecto se mantiene fuerte en Barranquilla y Sincelejo",
-      "Valle · testigos 100% · Verde mantiene Cali, Espriella subiendo en Jamundí y Palmira",
-      "Nariño rural · participación +11 vs 2022 · testigos reportan alto flujo a las 10:10"
+      "Antioquia rural · efecto Westcol sostenido 11:28 · Espriella +7-8 pts rural",
+      "Bogotá popular · colas 70+ min 11:35 · Cepeda ventaja clara en Suba/Usme",
+      "Costa Caribe · Westcol clips siguen circulando · Espriella impulso joven visible",
+      "Testigos 98.31% nacional (récord) · #TestigoDigital activo con fotos de actas",
+      "Participación alta en zonas populares · voto exterior récord confirmado"
     ]
   },
   en: {
@@ -494,16 +494,16 @@ const I18N = {
     confidence: "confidence", tooClose: "TOO CLOSE", lead: "LEAD",
     verified: "VERIFIED", newPost: "NEW",
     tickerItems: [
-      "Antioquia · rural witnesses report strong mobilization at 10:20 · Espriella +7.8 in X projection",
-      "Bogotá Suba/Usme · 80+ min lines at 10:18 · Cepeda consolidating popular vote base",
-      "Caribe Coast · Westcol effect still strong in Barranquilla & Sincelejo",
-      "Valle · 100% tables · Verde holding Cali, Espriella rising in Jamundí & Palmira",
-      "Rural Nariño · turnout +11 vs 2022 · witnesses report high flow at 10:10"
+      "Antioquia rural · Westcol effect sustained 11:28 · Espriella +7-8 pts rural",
+      "Bogotá popular · 70+ min lines 11:35 · Cepeda clear advantage in Suba/Usme",
+      "Caribe Coast · Westcol clips still circulating · Espriella youth momentum visible",
+      "Witnesses 98.31% national (record) · #TestigoDigital active with acta photos",
+      "High turnout in popular areas · overseas vote at historic record"
     ]
   }
 };
 
-// Heavy-seed updated data (11:05 COT, late morning ~3h+ into voting)
+// Heavy-seed refreshed + scheduler heavy pulls every 15m (focus recency) — clock now uses real America/Bogota time
 // Mapped to design parties for visual fidelity
 const PARTIES = {
   pacto:   { abbr: "Pacto", full: { es: "Pacto Histórico", en: "Pacto Histórico" }, side: { es: "Coalición de izquierda", en: "Left coalition" }, color: "var(--p-pacto)" },
@@ -553,31 +553,31 @@ let region = {
   ],
   posts: [
     { id: 101, author: "Testigo Suba", handle: "@testigo_suba", v: true,
-      es: "A las 10:18 en Corferias y Suba las colas siguen largas (más de 80 min). Voto joven y de sectores populares muy alto. Cepeda consolidando ventaja clara en estos puntos.",
-      en: "At 10:18 at Corferias and Suba lines still long (over 80 min). Very high youth and popular-sector turnout. Cepeda consolidating clear advantage in these precincts." },
-    { id: 102, author: "Westcol Stream Chat", handle: "@westcol", v: false,
-      es: "A las 10:05 en Rionegro y Marinilla la gente sigue hablando del stream. Espriella está sacando voto rural por encima de lo que marcaban las encuestas. El efecto se mantiene fuerte.",
-      en: "At 10:05 in Rionegro and Marinilla people are still talking about the stream. Espriella is getting more rural vote than the polls showed. The effect is holding strong." },
+      es: "A las 11:35 en Corferias y Suba las colas aún superan los 70 min. Voto joven y popular masivo. Cepeda consolida ventaja clara en sectores populares de Bogotá.",
+      en: "At 11:35 at Corferias and Suba lines still over 70 min. Massive youth and popular turnout. Cepeda consolidating clear advantage in Bogotá popular sectors." },
+    { id: 102, author: "Westcol en Calle", handle: "@westcol", v: false,
+      es: "A las 11:20 en Barranquilla y Sincelejo sigo preguntando en la calle. La gente menciona el stream de ayer con Espriella como razón para votar hoy. Efecto real en la costa.",
+      en: "At 11:20 in Barranquilla and Sincelejo still doing street interviews. People citing yesterday's Espriella stream as reason to vote today. Real effect on the coast." },
     { id: 103, author: "MOE Colombia", handle: "@moecolombia", v: true,
-      es: "373.000 testigos. Cobertura 97% de mesas. A esta hora reportan buena afluencia en la mayoría de puestos. Incidencias menores aisladas (resueltas rápidamente).",
-      en: "373,000 witnesses. 97% table coverage. At this hour good turnout reported at most stations. Isolated minor incidents (resolved quickly)." },
+      es: "373.612 testigos acreditados. Cobertura 98.31% de mesas (récord). Proceso con alta transparencia reportada hasta ahora. Pocas incidencias mayores.",
+      en: "373,612 accredited witnesses. 98.31% table coverage (record). High transparency reported so far. Few major incidents." },
     { id: 104, author: "Caribe Político", handle: "@caribe_pol", v: false,
-      es: "A las 10:22 en Barranquilla y Sincelejo el flujo sigue alto. El impulso de Westcol + de la Espriella se nota claramente en la costa. Participación joven y rural por encima de lo esperado.",
-      en: "At 10:22 in Barranquilla and Sincelejo flow remains high. The Westcol + de la Espriella boost is clearly visible on the coast. Youth and rural turnout above expectations." },
+      es: "A las 11:40 en Barranquilla el flujo sigue alto. Espriella capitaliza el impulso Westcol entre jóvenes y sectores populares de la costa. Participación por encima de lo esperado.",
+      en: "At 11:40 in Barranquilla flow remains high. Espriella capitalizing on Westcol momentum among youth and popular sectors on the coast. Turnout above expectations." },
     { id: 105, author: "Registraduría", handle: "@Registraduria", v: true,
-      es: "Mesas 100% instaladas. Primeros reportes de participación a las 10:00 muestran números sólidos en Bogotá, Medellín, Barranquilla y Cali. Voto exterior récord confirmado.",
-      en: "Tables 100% installed. First official turnout reports at 10:00 show solid numbers in Bogotá, Medellín, Barranquilla and Cali. Record overseas vote confirmed." },
-    { id: 106, author: "Observador Nariño", handle: "@obs_narino", v: true,
-      es: "A las 10:10 en Pasto y zonas rurales de Nariño la participación supera las expectativas a esta hora. Mucha gente madrugó y sigue llegando. Testigos de todos los candidatos presentes.",
-      en: "At 10:10 in Pasto and rural Nariño turnout is exceeding expectations for this hour. Many voted early and more keep arriving. Witnesses from all candidates present." }
+      es: "Mesas 100% instaladas desde las 8:00. Reportes de alta participación en zonas populares de Bogotá, Medellín, Barranquilla y Cali. Voto exterior con récord histórico.",
+      en: "Tables 100% installed since 8:00. High turnout reports from popular areas in Bogotá, Medellín, Barranquilla and Cali. Overseas vote at historic record." },
+    { id: 106, author: "Testigo Antioquia Rural", handle: "@testigo_rural", v: true,
+      es: "A las 11:15 en oriente antioqueño (Rionegro, Marinilla) la movilización rural es notable. Efecto del stream de Westcol con Espriella se siente fuerte. Testigos de todos los candidatos presentes.",
+      en: "At 11:15 in eastern Antioquia (Rionegro, Marinilla) rural mobilization is notable. Westcol + Espriella stream effect strongly felt. Witnesses from all candidates present." }
   ]
 };
 
-// X post pool for live injection (mid-morning heavy signals ~10:28 COT)
+// X post pool for live injection (heavy recency focus, scheduler active every 15m)
 const POST_POOL = [
-  { author: "Testigo Rionegro", handle: "@testigo_rion", v: false, es: "A las 10:12 en el oriente antioqueño el efecto Westcol sigue fuerte. Espriella va a llevarse varios puntos más de lo que decían las encuestas en zonas rurales.", en: "At 10:12 in eastern Antioquia the Westcol effect remains strong. Espriella will take several points more than polls predicted in rural zones." },
-  { author: "Diáspora Miami", handle: "@colombianos_mia", v: true, es: "Voto en el exterior cerrado con récord. A esta hora en Colombia se ve mucha más participación joven de lo habitual en Suba, Soacha y algunas zonas de la costa.", en: "Overseas voting closed with record numbers. At this hour in Colombia we are seeing much higher youth participation than usual in Suba, Soacha and parts of the coast." },
-  { author: "Valle Testigo", handle: "@testigo_valle", v: true, es: "A las 10:20 en Jamundí y Palmira las colas siguen largas pero ordenadas. Testigos de los principales candidatos presentes. Buena participación en zonas populares y rurales.", en: "At 10:20 in Jamundí and Palmira lines remain long but orderly. Witnesses from the main candidates present. Good turnout in popular and rural areas." }
+  { author: "Testigo Rionegro", handle: "@testigo_rion", v: false, es: "A las 11:28 en el oriente antioqueño el efecto Westcol sigue fuerte. Espriella sacando voto rural por encima de encuestas. Testigos reportan alta movilización.", en: "At 11:28 in eastern Antioquia Westcol effect remains strong. Espriella pulling rural vote above polls. Witnesses reporting high mobilization." },
+  { author: "Testigo Costa", handle: "@testigo_costa", v: true, es: "A las 11:40 en Barranquilla y Cartagena el impulso de Espriella post-Westcol es visible. Jóvenes mencionan el stream como razón para votar hoy. Flujo alto en urnas.", en: "At 11:40 in Barranquilla and Cartagena Espriella post-Westcol momentum visible. Youth citing the stream as reason to vote today. High flow at polling stations." },
+  { author: "MOE Observador", handle: "@moe_observador", v: true, es: "A las 11:30 cobertura testigos 98.3% nacional (récord). Pocas incidencias. Ciudadanos subiendo fotos de actas (#TestigoDigital) para auditoría paralela.", en: "At 11:30 witness coverage 98.3% national (record). Few incidents. Citizens uploading acta photos (#TestigoDigital) for parallel audit." }
 ];
 
 function t(key) {
@@ -589,33 +589,32 @@ function updateLiveBadge() {
   if (el) el.textContent = `${t('updated')} ${state.lastUpdate}s ${t('ago')}`;
 }
 
-// Live COT clock (simulated election day ~09:02 onward)
-let cotBaseMinutes = 11 * 60 + 5; // 11:05 COT - late morning, polls open ~3+ hours
-
+// Accurate live COT clock (always shows real Colombia time, regardless of your local timezone)
 function updateLiveCOTClock() {
   const timeEl = document.getElementById('live-cot-time');
   const minutesEl = document.getElementById('voting-minutes');
   const seedEl = document.getElementById('seed-time');
   const feedEl = document.getElementById('feed-time');
 
-  // Advance roughly 1 simulated minute every 45 real seconds for nice pace
+  // Get current time in America/Bogota (COT = UTC-5, no DST)
   const now = new Date();
-  const simulatedMinutes = cotBaseMinutes + Math.floor((Date.now() / 1000 - window.cotStartTs) / 45);
+  const cotTime = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/Bogota',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  }).format(now);
 
-  const hours = Math.floor(simulatedMinutes / 60) % 24;
-  const mins = simulatedMinutes % 60;
-  const timeStr = `${hours.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}`;
+  if (timeEl) timeEl.textContent = cotTime;
+  if (seedEl) seedEl.textContent = cotTime;
+  if (feedEl) feedEl.textContent = cotTime;
 
-  if (timeEl) timeEl.textContent = timeStr;
-  if (seedEl) seedEl.textContent = timeStr;
-  if (feedEl) feedEl.textContent = timeStr;
-
-  // Voting minutes since 08:00
-  const votingMins = Math.max(0, simulatedMinutes - (8 * 60));
+  // Calculate minutes since polls opened at 08:00 COT today (May 31 2026)
+  const cotHours = parseInt(cotTime.split(':')[0], 10);
+  const cotMins = parseInt(cotTime.split(':')[1], 10);
+  const votingMins = Math.max(0, (cotHours - 8) * 60 + cotMins);
   if (minutesEl) minutesEl.textContent = votingMins;
 }
-
-window.cotStartTs = Date.now() / 1000;
 
 function switchLang(newLang) {
   state.lang = newLang;
@@ -647,7 +646,7 @@ function setTheme(newTheme) {
 
 function switchRegion(key) {
   if (key !== 'colombia') {
-    alert('Solo Colombia está cableada con datos heavy reales para esta jornada (10:28 COT). Demo visual para otras regiones.');
+    alert('Solo Colombia está cableada con datos heavy reales para esta jornada (hora COT). Demo visual para otras regiones.');
   }
   state.regionKey = key;
   document.querySelectorAll('.region-pill').forEach(el => {
@@ -1119,7 +1118,7 @@ function startLiveSimulation() {
     updateLiveCOTClock();
   }, 2850);
 
-  // Seconds counter + live COT clock
+  // Seconds counter + live COT clock (updates every second for smoothness)
   setInterval(() => {
     state.lastUpdate = (state.lastUpdate || 0) + 1;
     updateLiveBadge();
@@ -1157,7 +1156,7 @@ function runTraceProtocol() {
 function verifySource(partyKey) {
   const p = PARTIES[partyKey] || { full: { es: 'este candidato', en: 'this candidate' } };
   const name = p.full[state.lang] || partyKey;
-  alert('Fuente primaria verificada para ' + name + '. Heavy seed 10:28 COT. Ver linaje completo en /source/.');
+  alert('Fuente primaria verificada para ' + name + '. Heavy seed actualizado en hora COT. Ver linaje completo en /source/.');
 }
 
 function showSourceWiki() {

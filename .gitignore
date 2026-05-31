@@ -66,3 +66,4 @@ temp/
 
 # Keep source HTML trackers and designs tracked (they are the reference material)
 # public/index.html is the production copy served at root
+.vercel

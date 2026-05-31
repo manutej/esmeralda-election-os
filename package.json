@@ -8,8 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "deploy:preview": "vercel",
-    "deploy:prod": "vercel --prod"
+    "deploy:preview": "npx vercel",
+    "deploy:prod": "npx vercel --prod"
   },
   "dependencies": {
     "@vercel/kv": "^3.0.0",
