@@ -911,32 +911,33 @@ let region = {
     { name: "Costa Caribe", lead: "centro", status: { es: "ESPRIELLA +8.2 OFICIAL", en: "ESPRIELLA +8.2 OFFICIAL" }, pct: 33, vol: "—", note: "Conteo real costa + Westcol" }
   ],
   posts: [
-    { id: 101, author: "Testigo Suba", handle: "@testigo_suba", v: true, recency: 5, likes: 1840,
-      es: "A las 11:35 en Corferias y Suba las colas aún superan los 70 min. Voto joven y popular masivo. Cepeda consolida ventaja clara en sectores populares de Bogotá.",
-      en: "At 11:35 at Corferias and Suba lines still over 70 min. Massive youth and popular turnout. Cepeda consolidating clear advantage in Bogotá popular sectors." },
-    { id: 102, author: "Westcol en Calle", handle: "@westcol", v: false, recency: 6, likes: 3120,
-      es: "A las 11:20 en Barranquilla y Sincelejo sigo preguntando en la calle. La gente menciona el stream de ayer con Espriella como razón para votar hoy. Efecto real en la costa.",
-      en: "At 11:20 in Barranquilla and Sincelejo still doing street interviews. People citing yesterday's Espriella stream as reason to vote today. Real effect on the coast." },
-    { id: 103, author: "MOE Colombia", handle: "@moecolombia", v: true, recency: 4, likes: 980,
-      es: "373.612 testigos acreditados. Cobertura 98.31% de mesas (récord). Proceso con alta transparencia reportada hasta ahora. Pocas incidencias mayores.",
-      en: "373,612 accredited witnesses. 98.31% table coverage (record). High transparency reported so far. Few major incidents." },
-    { id: 104, author: "Caribe Político", handle: "@caribe_pol", v: false, recency: 3, likes: 1450,
-      es: "A las 11:40 en Barranquilla el flujo sigue alto. Espriella capitaliza el impulso Westcol entre jóvenes y sectores populares de la costa. Participación por encima de lo esperado.",
-      en: "At 11:40 in Barranquilla flow remains high. Espriella capitalizing on Westcol momentum among youth and popular sectors on the coast. Turnout above expectations." },
-    { id: 105, author: "Registraduría", handle: "@Registraduria", v: true, recency: 2, likes: 720,
-      es: "Mesas 100% instaladas desde las 8:00. Reportes de alta participación en zonas populares de Bogotá, Medellín, Barranquilla y Cali. Voto exterior con récord histórico.",
-      en: "Tables 100% installed since 8:00. High turnout reports from popular areas in Bogotá, Medellín, Barranquilla and Cali. Overseas vote at historic record." },
-    { id: 106, author: "Testigo Antioquia Rural", handle: "@testigo_rural", v: true, recency: 1, likes: 2100,
-      es: "A las 11:15 en oriente antioqueño (Rionegro, Marinilla) la movilización rural es notable. Efecto del stream de Westcol con Espriella se siente fuerte. Testigos de todos los candidatos presentes.",
-      en: "At 11:15 in eastern Antioquia (Rionegro, Marinilla) rural mobilization is notable. Westcol + Espriella stream effect strongly felt. Witnesses from all candidates present." }
+    { id: 201, author: "Joven Barranquilla", handle: "@joven_barranquilla", v: true, recency: 25, likes: 1240,
+      es: "El stream de Westcol con El Tigre sigue dando de qué hablar en Barranquilla. Ya voté y muchos jóvenes decimos lo mismo hoy.",
+      en: "Westcol's stream with El Tigre is still being talked about in Barranquilla. I already voted and many young people are saying the same today." },
+    { id: 202, author: "Testigo Suba", handle: "@testigo_suba", v: true, recency: 24, likes: 980,
+      es: "En Suba estamos reforzando testigos en mesas de baja afluencia. Reportamos traslados sospechosos y personas sin identificación dando instrucciones en el Colegio Gerardo Paredes.",
+      en: "In Suba we are reinforcing witnesses in low-turnout tables. We are reporting suspicious transfers and people without identification giving instructions at Colegio Gerardo Paredes." },
+    { id: 203, author: "Joven Cartagena", handle: "@cartagena_joven", v: false, recency: 23, likes: 760,
+      es: "Westcol nos movió a muchos en la costa. Voté por Espriella y en la fila se sentía el impulso de los jóvenes.",
+      en: "Westcol moved many of us on the coast. I voted for Espriella and you could feel the youth momentum in line." },
+    { id: 204, author: "Testigo Usme", handle: "@testigo_usme", v: true, recency: 22, likes: 650,
+      es: "En Usme seguimos con buena participación en sectores populares. Los testigos del Pacto estamos atentos para defender cada mesa.",
+      en: "In Usme we continue with good participation in popular sectors. Pacto witnesses are on alert to defend every table." },
+    { id: 205, author: "Barranquillera", handle: "@barranquilla_vota", v: false, recency: 21, likes: 890,
+      es: "Después del stream de Westcol con El Tigre la gente salió más tarde pero con ganas. En la mesa había más jóvenes que en otras jornadas.",
+      en: "After Westcol's stream with El Tigre people went out later but with energy. At the polling station there were more young people than in other elections." },
+    { id: 206, author: "Testigo Suba", handle: "@testigo_suba2", v: true, recency: 20, likes: 1120,
+      es: "En Mesa 24 del puesto de Suba reportamos más votos que sufragantes registrados. Los testigos estamos documentando todo para auditoría.",
+      en: "At Table 24 in the Suba polling station we reported more votes than registered voters. Witnesses are documenting everything for audit." }
   ]
 };
 
 // X post pool for live injection (heavy recency focus, scheduler active every 15m)
 const POST_POOL = [
-  { author: "Testigo Rionegro", handle: "@testigo_rion", v: false, recency: 7, likes: 1650, es: "A las 11:28 en el oriente antioqueño el efecto Westcol sigue fuerte. Espriella sacando voto rural por encima de encuestas. Testigos reportan alta movilización.", en: "At 11:28 in eastern Antioquia Westcol effect remains strong. Espriella pulling rural vote above polls. Witnesses reporting high mobilization." },
-  { author: "Testigo Costa", handle: "@testigo_costa", v: true, recency: 8, likes: 2890, es: "A las 11:40 en Barranquilla y Cartagena el impulso de Espriella post-Westcol es visible. Jóvenes mencionan el stream como razón para votar hoy. Flujo alto en urnas.", en: "At 11:40 in Barranquilla and Cartagena Espriella post-Westcol momentum visible. Youth citing the stream as reason to vote today. High flow at polling stations." },
-  { author: "MOE Observador", handle: "@moe_observador", v: true, recency: 6, likes: 1120, es: "A las 11:30 cobertura testigos 98.3% nacional (récord). Pocas incidencias. Ciudadanos subiendo fotos de actas (#TestigoDigital) para auditoría paralela.", en: "At 11:30 witness coverage 98.3% national (record). Few incidents. Citizens uploading acta photos (#TestigoDigital) for parallel audit." }
+  { author: "Joven Barranquilla", handle: "@joven_barranquilla", v: true, recency: 25, likes: 1240, es: "El stream de Westcol con El Tigre sigue dando de qué hablar en Barranquilla. Ya voté y muchos jóvenes decimos lo mismo hoy.", en: "Westcol's stream with El Tigre is still being talked about in Barranquilla. I already voted and many young people are saying the same today." },
+  { author: "Testigo Suba", handle: "@testigo_suba", v: true, recency: 24, likes: 980, es: "En Suba estamos reforzando testigos en mesas de baja afluencia. Reportamos traslados sospechosos y personas sin identificación dando instrucciones en el Colegio Gerardo Paredes.", en: "In Suba we are reinforcing witnesses in low-turnout tables. We are reporting suspicious transfers and people without identification giving instructions at Colegio Gerardo Paredes." },
+  { author: "Joven Cartagena", handle: "@cartagena_joven", v: false, recency: 23, likes: 760, es: "Westcol nos movió a muchos en la costa. Voté por Espriella y en la fila se sentía el impulso de los jóvenes.", en: "Westcol moved many of us on the coast. I voted for Espriella and you could feel the youth momentum in line." },
+  { author: "Testigo Usme", handle: "@testigo_usme", v: true, recency: 22, likes: 650, es: "En Usme seguimos con buena participación en sectores populares. Los testigos del Pacto estamos atentos para defender cada mesa.", en: "In Usme we continue with good participation in popular sectors. Pacto witnesses are on alert to defend every table." }
 ];
 
 // BERTIN DATA EXTENSION (for preview panel + live recency)
@@ -1921,7 +1922,9 @@ function boot() {
   if (typeof seedBertinHistory === 'function') seedBertinHistory();
 
   // Initial renders
+  state.postSortMode = 'recency';
   renderAll();
+  renderSignalInsights();
 
   // Live
   startLiveSimulation();
