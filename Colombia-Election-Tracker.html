@@ -1240,11 +1240,11 @@ function showDeptTooltip(deptId, evt, container, tooltipEl) {
     const v = dept.variance || 0;
     const vColor = v >= 0 ? 'var(--good)' : 'var(--bad)';
     stats.innerHTML = `
-      X-Proj <span style="color:${party.color};font-weight:700">${(dept.xProj||0).toFixed(1)}%</span>
+      X-Proj (proy. voto): <span style="color:${party.color};font-weight:700">${(dept.xProj||0).toFixed(1)}%</span>
       <span style="opacity:0.4;margin:0 3px">·</span>
-      Rep ${(dept.rep||0)}%
+      Escrutado: ${(dept.rep||0)}%
       <span style="opacity:0.4;margin:0 3px">·</span>
-      Var <span style="color:${vColor};font-weight:700">${v >= 0 ? '+' : ''}${v.toFixed(1)}</span>
+      Var (X vs oficial): <span style="color:${vColor};font-weight:700">${v >= 0 ? '+' : ''}${v.toFixed(1)}</span>
     `;
   }
 
