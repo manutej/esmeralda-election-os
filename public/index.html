@@ -436,21 +436,33 @@
 
   <!-- HERO BAND: Projected Leader + Metrics -->
   <div class="grid grid-cols-[1.55fr,1fr] gap-4 mb-4">
-    <!-- Projected Leader (big) -->
+    <!-- Projected Leader (big) - Bertin-inspired clear encoding: position/size for leading %, hue for party, value for official vs proj distinction -->
     <div class="card card-raised px-7 py-6">
       <div class="eyebrow" style="color:var(--gold); margin-bottom:6px;">LÍDER PROYECTADO</div>
-      <div class="flex items-center gap-5">
-        <div id="leader-color-bar" style="width:7px; align-self:stretch; border-radius:4px; background:var(--p-pacto); box-shadow:var(--glow);"></div>
+      <div class="flex items-start gap-5">
+        <div id="leader-color-bar" style="width:8px; align-self:stretch; border-radius:4px; background:var(--p-pacto); box-shadow:var(--glow); margin-top:4px;"></div>
         <div class="flex-1 min-w-0">
-          <div id="leader-name" class="display text-[52px] leading-none text-[var(--ink)] tracking-[-1.5px]">Pacto Histórico</div>
-          <div id="leader-sub" class="text-[var(--dim)] text-[13px] mt-1">Iván Cepeda · Coalición de izquierda</div>
-        </div>
-        <div class="text-right">
-          <div class="flex items-baseline gap-1">
-            <span id="leader-pct" class="font-mono font-bold text-[56px] tracking-[-2px]" style="color:var(--p-pacto);">34.8</span>
-            <span class="font-mono text-[22px] opacity-60" style="color:var(--p-pacto);">%</span>
+          <!-- Big number with name underneath (color coded) as requested -->
+          <div>
+            <div class="flex items-baseline gap-1">
+              <span id="leader-pct" class="font-mono font-bold text-[56px] tracking-[-2px]" style="color:var(--p-pacto);">34.8</span>
+              <span class="font-mono text-[22px] opacity-60" style="color:var(--p-pacto);">%</span>
+            </div>
+            <div id="leader-name" class="display text-[26px] leading-none tracking-[-0.5px] mt-0.5" style="color:var(--p-pacto);">Pacto Histórico</div>
+            <div id="leader-sub" class="text-[var(--dim)] text-[12px] mt-0.5">Iván Cepeda · Coalición de izquierda</div>
           </div>
-          <div class="eyebrow mt-0.5">PROYECCIÓN X</div>
+
+          <!-- Clear dual indicator: Official + Projection (high quality dashboard style) -->
+          <div class="flex items-center gap-4 mt-3 text-[11px]">
+            <div>
+              <span class="text-[var(--dim)]">OFICIAL:</span> 
+              <span id="leader-official-pct" class="font-mono font-semibold" style="color:var(--p-pacto);">12.8%</span>
+            </div>
+            <div>
+              <span class="text-[var(--dim)]">X-PROJ:</span> 
+              <span id="leader-xproj-pct" class="font-mono font-semibold" style="color:var(--p-pacto);">35.1%</span>
+            </div>
+          </div>
         </div>
       </div>
       <div class="flex items-center gap-3 mt-3">
@@ -468,7 +480,7 @@
       </div>
       <div class="grid grid-cols-3 gap-5">
         <div>
-          <div class="eyebrow mb-1">ESCRUTADO</div>
+          <div class="eyebrow mb-1">PROMEDIO PRECINTOS REPORTANDO</div>
           <div class="flex items-baseline gap-1">
             <span id="metric-reporting" class="font-mono font-bold text-[26px] text-[var(--gold)]">0</span>
             <span class="font-mono text-[var(--gold)] opacity-60">%</span>
@@ -1572,11 +1584,26 @@ function renderProjectedLeader() {
   const margin = sorted.length > 1 ? (sorted[0].xProj - sorted[1].xProj) : 0;
   const close = margin < 2;
 
-  document.getElementById('leader-color-bar').style.background = leader.color;
+  const color = leader.color;
+
+  document.getElementById('leader-color-bar').style.background = color;
+
+  // Big % (X-Proj as primary projection number)
+  const pctEl = document.getElementById('leader-pct');
+  pctEl.textContent = top.xProj.toFixed(1);
+  pctEl.style.color = color;
+
+  // NAME underneath the number (color coded) - as requested
   document.getElementById('leader-name').textContent = leader.full[state.lang];
+  document.getElementById('leader-name').style.color = color;
+
   document.getElementById('leader-sub').textContent = `${top.cand} · ${leader.side[state.lang]}`;
-  document.getElementById('leader-pct').textContent = top.xProj.toFixed(1);
-  document.getElementById('leader-pct').style.color = leader.color;
+
+  // Clear dual indicators
+  const officialVal = top.official || 0;
+  document.getElementById('leader-official-pct').textContent = officialVal > 0 ? officialVal.toFixed(1) + '%' : '—';
+  document.getElementById('leader-xproj-pct').textContent = top.xProj.toFixed(1) + '%';
+
   document.getElementById('leader-margin-chip').innerHTML = close ? t('tooClose') : `+${margin.toFixed(1)} ${t('lead')}`;
   document.getElementById('leader-margin-chip').style.color = close ? 'var(--warn)' : 'var(--good)';
   document.getElementById('leader-conf').textContent = region.confidence;
@@ -1584,7 +1611,16 @@ function renderProjectedLeader() {
 
 // Render Metrics
 function renderMetrics() {
-  document.getElementById('metric-reporting').textContent = region.reporting.toFixed(0);
+  // Average precincts reporting from hex data (Bertin position + value encoding for the metric)
+  let avgReporting = region.reporting || 0;
+  if (window.coHex && window.coHex.length) {
+    const reps = window.coHex.map(h => h.rep || 0).filter(r => r > 0);
+    if (reps.length) {
+      avgReporting = reps.reduce((a, b) => a + b, 0) / reps.length;
+    }
+  }
+  document.getElementById('metric-reporting').textContent = avgReporting.toFixed(0);
+
   document.getElementById('metric-turnout').textContent = region.turnout.toFixed(1);
   const sent = document.getElementById('metric-sentiment');
   sent.textContent = (region.sentiment >= 0 ? '+' : '') + region.sentiment + '%';
