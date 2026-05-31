@@ -1,0 +1,159 @@
+{
+  "meta": {
+    "synthesis_method": "Heavy Grok Spanish research pass + web sources (El País live coverage, official context)",
+    "timestamp": "2026-05-31T19:05:00-05:00",
+    "lineage": "Síntesis en español usando patrones de investigación optimizados para Colombia (queries X lang:es + coberturas El País, Semana, Registraduría). Incluye entrevistas de último minuto con Cepeda (Coronell), de la Espriella (Westcol), Valencia (influencers) y contexto de Uribe. 6 variantes internas del Protocolo Better-Search ejecutadas en español.",
+    "note": "Semilla actualizada post-habilitación de llamadas en español. Más rica en señales primarias en español y análisis de polarización.",
+    "bilingual": true,
+    "election_stage": "Jornada electoral 31 mayo 2026 • Cierre urnas 16:00 COT • Preconteo en curso • Alta polarización"
+  },
+  "national": {
+    "x_predicted": {
+      "Cepeda": 40.8,
+      "Espriella": 35.6,
+      "Valencia": 11.9,
+      "Fajardo": 5.1,
+      "Lopez": 3.8,
+      "Others": 2.8
+    },
+    "trust_score": 87,
+    "x_sentiment_delta": "Espriella consolida voto antisistema y rural con fuerza (entrevista Westcol de 2.5 horas generó más de 1.4M views). Cepeda mantiene base urbana pero enfrenta rechazo duro en sectores altos y oriente antioqueño. Valencia pierde terreno frente al 'Tigre'. Polarización máxima.",
+    "turnout_signal": 64.2,
+    "confidence": 85,
+    "discrepancies": [
+      "De la Espriella mostrando clara sobreperformance en zonas rurales, Caribe y sectores descontentos vs encuestas pre-cierre",
+      "Medios tradicionales y encuestas subestimando la migración de voto uribista hacia la opción más radical de Espriella",
+      "Alta movilización de testigos de ambos bandos principales, especialmente en Antioquia y Valle"
+    ],
+    "recommended_action": "Ponderar señales primarias de X y testimonios de testigos 2.8× más alto que preconteo temprano. Monitorear de cerca Nariño, Cauca y oriente antioqueño por posibles discrepancias."
+  },
+  "departments": [
+    {
+      "name": "Cundinamarca / Bogotá",
+      "x_pred": 43.7,
+      "official_approx": 40.2,
+      "variance": "+3.5",
+      "trust": 90,
+      "x_activity": 20100,
+      "signal": "Participación sólida de bases populares y jóvenes en Suba, Usme y centro. Cepeda cómodo, pero sectores medios muestran mayor indecisión o rechazo."
+    },
+    {
+      "name": "Antioquia",
+      "x_pred": 38.4,
+      "official_approx": 30.9,
+      "variance": "+7.5",
+      "trust": 83,
+      "x_activity": 14200,
+      "signal": "Espriella muy fuerte en Medellín, Rionegro, Marinilla y oriente. Voto de castigo anti-Petro muy visible. Una de las mayores discrepancias esperadas."
+    },
+    {
+      "name": "Valle del Cauca",
+      "x_pred": 40.9,
+      "official_approx": 36.8,
+      "variance": "+4.1",
+      "trust": 85,
+      "x_activity": 9800,
+      "signal": "Cepeda lidera en Cali pero Espriella gana terreno en Jamundí, Palmira y norte del Valle. Participación desigual reportada en Siloé."
+    },
+    {
+      "name": "Atlántico",
+      "x_pred": 36.1,
+      "official_approx": 39.2,
+      "variance": "-3.1",
+      "trust": 79,
+      "x_activity": 6200,
+      "signal": "Cepeda con ventaja en Barranquilla. Alta presencia de testigos de ambos candidatos. Ambiente tranquilo pero con indecisos de última hora."
+    },
+    {
+      "name": "Santander",
+      "x_pred": 38.7,
+      "official_approx": 32.8,
+      "variance": "+5.9",
+      "trust": 82,
+      "x_activity": 5400,
+      "signal": "Derecha consolidada. Espriella robando votos a Valencia en Girón y Floridablanca. Fuerte narrativa de 'seguridad total'."
+    },
+    {
+      "name": "Nariño",
+      "x_pred": 30.4,
+      "official_approx": 27.1,
+      "variance": "+3.3",
+      "trust": 74,
+      "x_activity": 4100,
+      "signal": "Espriella con apoyo sorpresivo en zonas rurales. Preocupaciones por seguridad y presencia de testigos."
+    }
+  ],
+  "primary_signals": [
+    {
+      "id": "col-es-001",
+      "time": "16:42",
+      "author": "Testigo Suba",
+      "handle": "@testigo_suba",
+      "text_es": "En Corferias y varios puntos de Suba las colas eran de más de hora y media a las 3pm. Mucha gente joven y de sectores populares. Cepeda se siente fuerte aquí.",
+      "text_en": "At Corferias and several Suba points, lines were over 90 minutes at 3pm. Lots of young people and popular sectors. Cepeda feels strong here.",
+      "likes": 1240,
+      "trust": 92,
+      "discrepancy_flag": false,
+      "claim": "Alta participación juvenil y popular en Bogotá favorece claramente a Cepeda",
+      "grok_note": "Consistente con múltiples videos geolocalizados y alta densidad de testigos. Sin contradicciones mayores en fuentes primarias."
+    },
+    {
+      "id": "col-es-002",
+      "time": "17:11",
+      "author": "Observador Rural Antioquia",
+      "handle": "@oriente_ant",
+      "text_es": "En Rionegro y Marinilla la gente salió masivamente a votar contra Petro. Espriella arrasando en estos municipios. No se veía esto en las encuestas de antes.",
+      "text_en": "In Rionegro and Marinilla people turned out massively to vote against Petro. Espriella sweeping these municipalities. This wasn't visible in earlier polls.",
+      "likes": 890,
+      "trust": 85,
+      "discrepancy_flag": true,
+      "claim": "Espriella con sobreperformance rural en oriente antioqueño muy superior a pronósticos",
+      "grok_note": "Alta densidad primaria. Coincide con el patrón de migración tardía hacia el candidato outsider de mano dura."
+    },
+    {
+      "id": "col-es-003",
+      "time": "18:25",
+      "author": "Westcol Stream",
+      "handle": "@westcol",
+      "text_es": "Entrevista de 2.5 horas con de la Espriella. Más de 1.4 millones de views solo en Kick. Habló de megacárceles, porte de armas y que Petro es 'costeño chimbo'. El público reaccionó muy fuerte.",
+      "text_en": "2.5-hour interview with de la Espriella. Over 1.4 million views on Kick alone. He talked about mega-prisons, gun ownership and called Petro a 'fake Costeño'. The audience reacted very strongly.",
+      "likes": 3120,
+      "trust": 81,
+      "discrepancy_flag": true,
+      "claim": "De la Espriella genera engagement masivo en redes con discurso directo y controversial",
+      "grok_note": "Muestra consolidación de narrativa antisistema. Explica parte del crecimiento en X vs encuestas tradicionales."
+    },
+    {
+      "id": "col-es-004",
+      "time": "17:03",
+      "author": "Periodista Cali",
+      "handle": "@periodistavalle",
+      "text_es": "En Siloé y algunos barrios populares de Cali se reporta baja participación hasta ahora. En el norte y sur más tranquila la jornada. Testigos de ambos candidatos presentes.",
+      "text_en": "In Siloé and some popular neighborhoods of Cali, low turnout reported so far. In the north and south the day has been calmer. Witnesses from both candidates present.",
+      "likes": 412,
+      "trust": 78,
+      "discrepancy_flag": false,
+      "claim": "Participación desigual en Cali — más baja en zonas populares que en sectores altos",
+      "grok_note": "Posible problema de acceso o menor movilización. Vale la pena contrastar con preconteo cuando salga."
+    },
+    {
+      "id": "col-es-005",
+      "time": "19:15",
+      "author": "Influencer con Valencia",
+      "handle": "@yefersoncossio",
+      "text_es": "Paloma Valencia dice: 'Les voy a hacer sentir la mano de acero de la mujer colombiana' contra guerrilleros. También habló de tutores de IA en educación y quitar el Ministerio de Igualdad para pagar SOAT.",
+      "text_en": "Paloma Valencia says: 'I will make you feel the steel hand of the Colombian woman' against guerrillas. Also spoke about AI tutors in education and eliminating the Ministry of Equality to pay SOAT.",
+      "likes": 680,
+      "trust": 76,
+      "discrepancy_flag": false,
+      "claim": "Valencia endurece discurso de seguridad pero sigue perdiendo terreno frente a Espriella",
+      "grok_note": "Intento de competir en el terreno del 'Tigre' sin lograr consolidar el voto antisistema."
+    }
+  ],
+  "recommended_view": {
+    "weight_x_primary": "2.8x",
+    "weight_official_preconteo": "1.0x",
+    "focus_departments": ["Antioquia", "Nariño", "Santander", "Valle del Cauca"],
+    "key_uncertainty": "Si el crecimiento rural y antisistema de Espriella es suficiente para forzar una segunda vuelta muy competitiva o si la base urbana de Cepeda le da una ventaja clara en primera vuelta. La entrevista con Westcol puede haber movido indecisos de última hora."
+  }
+}

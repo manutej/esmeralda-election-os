@@ -1,0 +1,511 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   CETI Design System — colors_and_type.css
+   ─────────────────────────────────────────────────────────────────────────
+   Two systems, one file:
+
+   1. Retro Boardwalk — the teaching-diagram foundation.
+      Four palettes (boardwalk · coastal · greenhouse · neosage), each with
+      light + dark mode. Owala-water-bottle DNA. Dark mode uses LUMINOUS
+      BORDERS, not bright fills — the single most important rule.
+
+   2. CETI Gold — the product-chrome accent layer used only for marketing
+      surfaces (tier headers, primary CTAs, nav). Never inside diagrams.
+
+   Usage:
+     <body class="palette-boardwalk mode-light">   ← default
+     <body class="palette-neosage   mode-dark">    ← swap freely
+   A surface re-skins by changing the body class. Components only read
+   semantic tokens (--bg, --surface, --primary, --primary-text, --primary-edge,
+   etc.) — never hex.
+   ───────────────────────────────────────────────────────────────────────── */
+
+/* Exact import from the brand book — Fraunces (300, 300i, 600), DM Sans,
+   Space Mono. Inter + Oswald + JetBrains Mono retained *only* for the
+   legacy CETI product chrome (nav, marketing CTAs). */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:ital,wght@0,300;0,600;1,300&family=Space+Mono:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Oswald:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* ═══════════════════════════════════════════════════════════════════════
+   PALETTE 1 · RETRO BOARDWALK
+   90s boardwalk — cream + lilac + sage mint + dusty coral.
+   Light: warm cream · Dark: deep plum ink, luminous pastel edges.
+   ═══════════════════════════════════════════════════════════════════════ */
+.palette-boardwalk.mode-light,
+.palette-boardwalk .mode-light {
+  --bg:              #F5EDD6;
+  --surface:         #EDE0C4;
+  --surface-2:       #E5D6B4;
+  --ink:             #2A2018;
+  --dim:             #6A5A48;
+  --border:          rgba(62, 40, 112, 0.13);
+  --border-strong:   rgba(62, 40, 112, 0.28);
+
+  --primary:         #C4AEE2;
+  --primary-text:    #3E2870;
+  --primary-edge:    #3E2870;
+  --primary-bg:      rgba(196, 174, 226, 0.40);
+
+  --secondary:       #9DD0BA;
+  --secondary-text:  #1A5A44;
+  --secondary-edge:  #1A5A44;
+  --secondary-bg:    rgba(157, 208, 186, 0.40);
+
+  --accent:          #E8A898;
+  --accent-text:     #6A2018;
+  --accent-edge:     #6A2018;
+  --accent-bg:       rgba(232, 168, 152, 0.40);
+
+  --support:         #8AABCC;
+  --support-text:    #1A3A5A;
+  --support-edge:    #1A3A5A;
+  --support-bg:      rgba(138, 171, 204, 0.40);
+
+  --shadow-card:     0 1px 2px rgba(42,32,24,0.06), 0 6px 16px rgba(42,32,24,0.10);
+  --shadow-raised:   0 8px 28px rgba(42,32,24,0.18);
+  --shadow-focus:    0 0 0 3px rgba(62,40,112,0.22);
+}
+.palette-boardwalk.mode-dark,
+.palette-boardwalk .mode-dark {
+  --bg:              #1C1720;
+  --surface:         #26213A;
+  --surface-2:       #2E2942;
+  --ink:             #F2EBE0;
+  --dim:             #9888A8;
+  --border:          rgba(202, 184, 248, 0.15);
+  --border-strong:   rgba(202, 184, 248, 0.30);
+
+  --primary:         #2C2548;
+  --primary-text:    #CAB8F8;
+  --primary-edge:    #CAB8F8;
+  --primary-bg:      rgba(202, 184, 248, 0.10);
+
+  --secondary:       #1E302A;
+  --secondary-text:  #86DAC0;
+  --secondary-edge:  #86DAC0;
+  --secondary-bg:    rgba(134, 218, 192, 0.10);
+
+  --accent:          #3D241E;
+  --accent-text:     #E87258;
+  --accent-edge:     #E87258;
+  --accent-bg:       rgba(232, 114, 88, 0.12);
+
+  --support:         #1E2A3A;
+  --support-text:    #7AA0D0;
+  --support-edge:    #7AA0D0;
+  --support-bg:      rgba(122, 160, 208, 0.10);
+
+  --shadow-card:     0 0 0 1px rgba(202,184,248,0.10);
+  --shadow-raised:   0 0 0 2px rgba(202,184,248,0.22);
+  --shadow-focus:    0 0 0 3px rgba(202,184,248,0.35);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   PALETTE 2 · COASTAL MIST
+   Seafoam + blush. Warm/cool tension; good for tradeoffs.
+   ═══════════════════════════════════════════════════════════════════════ */
+.palette-coastal.mode-light,
+.palette-coastal .mode-light {
+  --bg:              #EDE8D8;
+  --surface:         #E2DBC8;
+  --surface-2:       #D8D0B8;
+  --ink:             #201E18;
+  --dim:             #706050;
+  --border:          rgba(26, 90, 74, 0.12);
+  --border-strong:   rgba(26, 90, 74, 0.28);
+
+  --primary:         #9DCFC0;
+  --primary-text:    #1A5A4A;
+  --primary-edge:    #1A5A4A;
+  --primary-bg:      rgba(157, 207, 192, 0.40);
+
+  --secondary:       #F0C4B4;
+  --secondary-text:  #6A3020;
+  --secondary-edge:  #6A3020;
+  --secondary-bg:    rgba(240, 196, 180, 0.40);
+
+  --accent:          #A8CCE0;
+  --accent-text:     #0E3A58;
+  --accent-edge:     #0E3A58;
+  --accent-bg:       rgba(168, 204, 224, 0.40);
+
+  --support:         #CCA0A0;
+  --support-text:    #5A2828;
+  --support-edge:    #5A2828;
+  --support-bg:      rgba(204, 160, 160, 0.40);
+
+  --shadow-card:     0 1px 2px rgba(32,30,24,0.06), 0 6px 16px rgba(32,30,24,0.10);
+  --shadow-raised:   0 8px 28px rgba(32,30,24,0.18);
+  --shadow-focus:    0 0 0 3px rgba(26,90,74,0.22);
+}
+.palette-coastal.mode-dark,
+.palette-coastal .mode-dark {
+  --bg:              #151C1E;
+  --surface:         #1C2830;
+  --surface-2:       #223240;
+  --ink:             #EDF4F2;
+  --dim:             #7A9490;
+  --border:          rgba(122, 222, 200, 0.14);
+  --border-strong:   rgba(122, 222, 200, 0.30);
+
+  --primary:         #162824;
+  --primary-text:    #7ADEC8;
+  --primary-edge:    #7ADEC8;
+  --primary-bg:      rgba(122, 222, 200, 0.10);
+
+  --secondary:       #2A1A18;
+  --secondary-text:  #F2B090;
+  --secondary-edge:  #F2B090;
+  --secondary-bg:    rgba(242, 176, 144, 0.10);
+
+  --accent:          #142838;
+  --accent-text:     #5AAAD8;
+  --accent-edge:     #5AAAD8;
+  --accent-bg:       rgba(90, 170, 216, 0.12);
+
+  --support:         #2A2020;
+  --support-text:    #E8B8B8;
+  --support-edge:    #E8B8B8;
+  --support-bg:      rgba(232, 184, 184, 0.10);
+
+  --shadow-card:     0 0 0 1px rgba(122,222,200,0.10);
+  --shadow-raised:   0 0 0 2px rgba(122,222,200,0.22);
+  --shadow-focus:    0 0 0 3px rgba(122,222,200,0.35);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   PALETTE 3 · GREENHOUSE
+   Olive + terracotta + sage. Systems / growth / infrastructure feel.
+   ═══════════════════════════════════════════════════════════════════════ */
+.palette-greenhouse.mode-light,
+.palette-greenhouse .mode-light {
+  --bg:              #EDE6D8;
+  --surface:         #E0D8C8;
+  --surface-2:       #D4CAB6;
+  --ink:             #1C1808;
+  --dim:             #6A5A48;
+  --border:          rgba(30, 48, 8, 0.12);
+  --border-strong:   rgba(30, 48, 8, 0.28);
+
+  --primary:         #8BA06A;
+  --primary-text:    #1E3008;
+  --primary-edge:    #1E3008;
+  --primary-bg:      rgba(139, 160, 106, 0.40);
+
+  --secondary:       #C4856A;
+  --secondary-text:  #3A1808;
+  --secondary-edge:  #3A1808;
+  --secondary-bg:    rgba(196, 133, 106, 0.40);
+
+  --accent:          #7A9E88;
+  --accent-text:     #102818;
+  --accent-edge:     #102818;
+  --accent-bg:       rgba(122, 158, 136, 0.40);
+
+  --support:         #B8ACA0;
+  --support-text:    #3C3028;
+  --support-edge:    #3C3028;
+  --support-bg:      rgba(184, 172, 160, 0.45);
+
+  --shadow-card:     0 1px 2px rgba(28,24,8,0.06), 0 6px 16px rgba(28,24,8,0.10);
+  --shadow-raised:   0 8px 28px rgba(28,24,8,0.18);
+  --shadow-focus:    0 0 0 3px rgba(30,48,8,0.22);
+}
+.palette-greenhouse.mode-dark,
+.palette-greenhouse .mode-dark {
+  --bg:              #141510;
+  --surface:         #1E2218;
+  --surface-2:       #262B1E;
+  --ink:             #EEE4D0;
+  --dim:             #8A8068;
+  --border:          rgba(170, 218, 120, 0.15);
+  --border-strong:   rgba(170, 218, 120, 0.30);
+
+  --primary:         #1C2814;
+  --primary-text:    #AADA78;
+  --primary-edge:    #AADA78;
+  --primary-bg:      rgba(170, 218, 120, 0.10);
+
+  --secondary:       #281C14;
+  --secondary-text:  #EEA878;
+  --secondary-edge:  #EEA878;
+  --secondary-bg:    rgba(238, 168, 120, 0.10);
+
+  --accent:          #142818;
+  --accent-text:     #68B888;
+  --accent-edge:     #68B888;
+  --accent-bg:       rgba(104, 184, 136, 0.12);
+
+  --support:         #282018;
+  --support-text:    #C8C0A8;
+  --support-edge:    #C8C0A8;
+  --support-bg:      rgba(200, 192, 168, 0.10);
+
+  --shadow-card:     0 0 0 1px rgba(170,218,120,0.10);
+  --shadow-raised:   0 0 0 2px rgba(170,218,120,0.22);
+  --shadow-focus:    0 0 0 3px rgba(170,218,120,0.35);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   PALETTE 4 · NEO SAGE
+   Muted-neon: dusty violet + acid lime + amber. Highest energy.
+   ═══════════════════════════════════════════════════════════════════════ */
+.palette-neosage.mode-light,
+.palette-neosage .mode-light {
+  --bg:              #F2F0E8;
+  --surface:         #E8E6DC;
+  --surface-2:       #DEDCD0;
+  --ink:             #201818;
+  --dim:             #706860;
+  --border:          rgba(42, 24, 96, 0.12);
+  --border-strong:   rgba(42, 24, 96, 0.28);
+
+  --primary:         #9E88C0;
+  --primary-text:    #2A1860;
+  --primary-edge:    #2A1860;
+  --primary-bg:      rgba(158, 136, 192, 0.40);
+
+  --secondary:       #B4C84A;
+  --secondary-text:  #303800;
+  --secondary-edge:  #303800;
+  --secondary-bg:    rgba(180, 200, 74, 0.40);
+
+  --accent:          #E8B86A;
+  --accent-text:     #503800;
+  --accent-edge:     #503800;
+  --accent-bg:       rgba(232, 184, 106, 0.40);
+
+  --support:         #A8A098;
+  --support-text:    #303028;
+  --support-edge:    #303028;
+  --support-bg:      rgba(168, 160, 152, 0.45);
+
+  --shadow-card:     0 1px 2px rgba(32,24,24,0.06), 0 6px 16px rgba(32,24,24,0.10);
+  --shadow-raised:   0 8px 28px rgba(32,24,24,0.18);
+  --shadow-focus:    0 0 0 3px rgba(42,24,96,0.22);
+}
+.palette-neosage.mode-dark,
+.palette-neosage .mode-dark {
+  --bg:              #131218;
+  --surface:         #1E1C28;
+  --surface-2:       #26243A;
+  --ink:             #F2F0E8;
+  --dim:             #888090;
+  --border:          rgba(192, 170, 248, 0.18);
+  --border-strong:   rgba(192, 170, 248, 0.35);
+
+  --primary:         #1C1838;
+  --primary-text:    #C0AAF8;
+  --primary-edge:    #C0AAF8;
+  --primary-bg:      rgba(192, 170, 248, 0.10);
+
+  --secondary:       #181E08;
+  --secondary-text:  #C8E850;
+  --secondary-edge:  #C8E850;
+  --secondary-bg:    rgba(200, 232, 80, 0.10);
+
+  --accent:          #2A2010;
+  --accent-text:     #E8A83A;
+  --accent-edge:     #E8A83A;
+  --accent-bg:       rgba(232, 168, 58, 0.12);
+
+  --support:         #201C20;
+  --support-text:    #B8B0C0;
+  --support-edge:    #B8B0C0;
+  --support-bg:      rgba(184, 176, 192, 0.10);
+
+  --shadow-card:     0 0 0 1px rgba(192,170,248,0.12);
+  --shadow-raised:   0 0 0 2px rgba(192,170,248,0.24);
+  --shadow-focus:    0 0 0 3px rgba(192,170,248,0.35);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   CROSS-PALETTE CONSTANTS — type, spacing, radii, motion, shadcn aliases
+   ═══════════════════════════════════════════════════════════════════════ */
+:root {
+  /* Fonts */
+  --font-display: "Fraunces", "Georgia", serif;    /* teaching — italic 300 is the signature */
+  --font-sans:    "DM Sans", "Inter", system-ui, sans-serif;
+  --font-mono:    "Space Mono", "JetBrains Mono", ui-monospace, monospace;
+
+  /* CETI product-chrome fonts (used only for marketing surfaces) */
+  --font-ceti-display: "Oswald", "Inter", sans-serif;
+  --font-ceti-sans:    "Inter", system-ui, sans-serif;
+  --font-ceti-mono:    "JetBrains Mono", ui-monospace, monospace;
+
+  /* CETI gold — only ever used for product chrome, never inside diagrams */
+  --ceti-gold:          #d4a84b;
+  --ceti-gold-hover:    #e0b85c;
+  --ceti-gold-dim:      rgba(212, 168, 75, 0.18);
+  --ceti-gold-ink:      #15110a;
+
+  /* Type scale — pixel-anchored. Brand book: min body 11px, caption 9–10px,
+     body line-height 1.5, display 1.1. Base bumped to 16px for readability. */
+  --fs-caption: 10px;
+  --fs-xs:   11px;
+  --fs-sm:   13px;
+  --fs-base: 16px;   /* body default — was 15; accessibility bump */
+  --fs-md:   17px;
+  --fs-lg:   19px;
+  --fs-xl:   24px;
+  --fs-2xl:  32px;
+  --fs-3xl:  44px;
+  --fs-4xl:  56px;
+
+  --lh-display: 1.1;
+  --lh-body:    1.5;
+  --lh-prose:   1.65;   /* long-form reading */
+
+  /* Radius — exact brand-book scale: 4 / 6 / 8 / 10 / 14 / 18. Nothing between. */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius:    8px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+  --radius-pill: 999px;
+
+  /* Spacing — 4pt grid */
+  --space-1: 4px;  --space-2: 8px;  --space-3: 12px; --space-4: 16px;
+  --space-5: 20px; --space-6: 24px; --space-7: 32px; --space-8: 40px;
+  --space-10: 56px; --space-12: 72px;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-fast: 150ms; --dur-base: 220ms; --dur-slow: 340ms; --dur-cycle: 1400ms;
+}
+
+/* Reduced motion — disable auto-cycles, keep interactive states */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   Base element defaults — applied only to .rb-scope so this file is
+   safe to import alongside other tokens. Wrap the page body in that class.
+   ───────────────────────────────────────────────────────────────────── */
+.rb-scope {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: var(--fs-base);
+  line-height: var(--lh-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  transition: background-color var(--dur-slow) var(--ease-out),
+              color var(--dur-slow) var(--ease-out);
+}
+
+/* ──────────────── Display — Fraunces 300 italic. Signature. ────────────────
+   Never mix weights within a single sentence — use spans with the same role. */
+.rb-scope h1, .rb-scope .h1 {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-style: italic;
+  font-size: clamp(34px, 5.2vw, 56px);
+  line-height: var(--lh-display);
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  text-wrap: balance;
+  margin: 0;
+}
+.rb-scope h2, .rb-scope .h2 {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-style: italic;
+  font-size: clamp(24px, 2.6vw, 30px);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  text-wrap: balance;
+  margin: 0;
+}
+/* H3 is DM Sans 600 — the "working" title for cards and subsections. */
+.rb-scope h3, .rb-scope .h3 {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: var(--fs-lg);
+  line-height: 1.3;
+  letter-spacing: -0.005em;
+  color: var(--ink);
+  margin: 0;
+}
+
+/* Body — DM Sans 400. Pretty wrapping, generous leading for readability. */
+.rb-scope p {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  color: var(--ink);
+  line-height: var(--lh-prose);
+  text-wrap: pretty;
+  margin: 0;
+}
+
+/* Lead — the sentence that sits under a headline. 1.55 for scannability. */
+.rb-scope .lead {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: var(--fs-lg);
+  line-height: 1.55;
+  color: var(--ink);
+  text-wrap: pretty;
+}
+
+.rb-scope .muted { color: var(--dim); }
+
+/* Caption — DM Sans 400 italic, max 80 chars (brand-book rule). */
+.rb-scope .caption {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-style: italic;
+  font-size: var(--fs-sm);
+  color: var(--dim);
+  line-height: 1.55;
+  max-width: 68ch;
+}
+
+/* Eyebrow — Space Mono 700, UPPERCASE, 0.2em tracked. The brand-book
+   caption spec: 9–10px, letter-spacing 0.2em, uppercase. */
+.rb-scope .eyebrow {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: var(--fs-caption);
+  letter-spacing: 0.20em;
+  text-transform: uppercase;
+  color: var(--dim);
+  line-height: 1.4;
+}
+
+/* Mono / code — Space Mono. */
+.rb-scope code, .rb-scope pre, .rb-scope .mono {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  font-weight: 400;
+}
+.rb-scope code {
+  background: var(--surface-2);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  color: var(--ink);
+}
+
+/* Accessibility — visible focus ring in the palette's primary edge color. */
+.rb-scope :focus-visible {
+  outline: 2px solid var(--primary-edge);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
+}
+
+/* Min 44px hit targets on interactive elements. */
+.rb-scope button, .rb-scope a[role="button"], .rb-scope [data-hit] {
+  min-height: 36px;
+}
+
+/* Selection color — palette-aware. */
+.rb-scope ::selection {
+  background: var(--primary);
+  color: var(--primary-text);
+}

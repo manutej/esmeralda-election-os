@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Esmeralda · Election OS — Colombia 2026</title>
+<link rel="stylesheet" href="election/ceti-tokens.css">
+<link rel="stylesheet" href="election/theme.css">
+<style>
+  html, body { margin: 0; height: 100%; background: #0e120f; }
+  /* floating global chrome */
+  .gc-wrap { position: fixed; top: 14px; left: 50%; transform: translateX(-50%); z-index: 60; }
+  .gc { display: flex; align-items: center; gap: 14px; padding: 8px 12px; border-radius: 999px;
+        background: var(--surface); border: 1px solid var(--border-2); box-shadow: var(--shadow-lg); }
+  .gc-seg { display: flex; padding: 2px; gap: 2px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--border); }
+  .gc-seg button { cursor: pointer; border: none; background: transparent; font-family: var(--f-mono); font-weight: 700;
+        font-size: 11px; letter-spacing: 0.06em; padding: 6px 12px; border-radius: 999px; color: var(--dim); transition: all .18s; display: flex; align-items: center; gap: 6px; }
+  .gc-seg button.on { background: var(--emerald-bg); color: var(--ink); box-shadow: var(--glow); }
+  .gc-divider { width: 1px; height: 22px; background: var(--border); }
+  .gc-note { font-family: var(--f-sans); font-size: 11px; color: var(--dim); padding-right: 4px; }
+  .gc-mark { display:flex; align-items:center; gap:7px; padding-left: 4px; font-family: var(--f-display); font-style: italic; font-weight:300; color: var(--ink); font-size: 15px; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<!-- data is plain JS; the rest pass through Babel unchanged -->
+<script src="election/data.js"></script>
+<script type="text/babel" src="election/map.jsx"></script>
+<script type="text/babel" src="election/hexmap.jsx"></script>
+<script type="text/babel" src="election/components.jsx"></script>
+<script type="text/babel" src="election/directions.jsx"></script>
+<script type="text/babel" src="election/design-canvas.jsx"></script>
+
+<script type="text/babel">
+function GlobalChrome() {
+  const { theme, setTheme, lang, setLang } = window.useEVT();
+  return (
+    <div className="evt" data-theme={theme} lang={lang}>
+      <div className="gc-wrap">
+        <div className="gc">
+          <span className="gc-mark">
+            <svg width="20" height="20" viewBox="0 0 40 40"><polygon points="20,3 33,11 33,29 20,37 7,29 7,11" fill="var(--emerald-bg)" stroke="var(--emerald)" strokeWidth="1.8" strokeLinejoin="round"/><path d="M14 15 L26 15 L29 28 L20 34 L11 28 Z" fill="none" stroke="var(--gold)" strokeWidth="1.1"/></svg>
+            Esmeralda
+          </span>
+          <span className="gc-divider"></span>
+          <div className="gc-seg">
+            <button className={lang === "es" ? "on" : ""} onClick={() => setLang("es")}>ES</button>
+            <button className={lang === "en" ? "on" : ""} onClick={() => setLang("en")}>EN</button>
+          </div>
+          <div className="gc-seg">
+            <button className={theme === "dark" ? "on" : ""} onClick={() => setTheme("dark")}>◐ DARK</button>
+            <button className={theme === "light" ? "on" : ""} onClick={() => setTheme("light")}>○ LIGHT</button>
+          </div>
+          <span className="gc-divider"></span>
+          <span className="gc-note">3 directions · ⤢ to focus a frame</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <window.EVTProvider>
+      <GlobalChrome />
+      <window.DesignCanvas>
+        <window.DCSection id="dirs" title="Esmeralda · Election OS — Colombia 2026"
+          subtitle="Three live-tracking layout directions · toggle ES/EN + light/dark above · sample data, wire to the live X feed">
+          <window.DCArtboard id="a" label="A · Control Room — dense data-first" width={1480} height={1280}>
+            <window.DirControlRoom />
+          </window.DCArtboard>
+          <window.DCArtboard id="b" label="B · Broadsheet — editorial" width={1400} height={1280}>
+            <window.DirBroadsheet />
+          </window.DCArtboard>
+          <window.DCArtboard id="c" label="C · Atlas — map hero" width={1520} height={1000}>
+            <window.DirAtlas />
+          </window.DCArtboard>
+        </window.DCSection>
+      </window.DesignCanvas>
+    </window.EVTProvider>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>

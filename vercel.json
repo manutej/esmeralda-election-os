@@ -1,0 +1,24 @@
+{
+  "crons": [
+    // DISABLED by default for cost reasons on election day.
+    // The heavy Grok synthesis seed (loaded statically) is the recommended fast/cheap path.
+    // Uncomment only if you explicitly want automatic expensive refreshes.
+    // {
+    //   "path": "/api/ingest?region=colombia&secret=YOUR_INGEST_SECRET",
+    //   "schedule": "*/12 * * * *"
+    // }
+  ],
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET,POST,OPTIONS" }
+      ]
+    }
+  ],
+  // For the high-fidelity standalone tracker (public/index.html)
+  // When deploying this folder, the root URL will serve the exact CETI Control Room prototype.
+  // This is the current election-day citizen deliverable (updated to 10:28 COT).
+  "trailingSlash": false
+}

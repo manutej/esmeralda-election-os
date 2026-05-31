@@ -1,0 +1,211 @@
+/* ───────────────────────────────────────────────────────────────
+   ESMERALDA — Election live-tracker theme
+   Emerald + Gold, built on the CETI / Retro Boardwalk token foundation.
+   Two modes (light = warm editorial, dark = election-night control room).
+   Scope everything under .evt; mode via [data-theme]; language via [lang].
+   ─────────────────────────────────────────────────────────────── */
+
+.evt {
+  /* type carried over from CETI tokens */
+  --f-display: "Fraunces", Georgia, serif;
+  --f-sans: "DM Sans", "Inter", system-ui, sans-serif;
+  --f-mono: "Space Mono", "JetBrains Mono", ui-monospace, monospace;
+
+  /* party colors (real Colombian party identities) — mode-independent */
+  --p-pacto:   #DC3B2C;   /* Pacto Histórico (izquierda) */
+  --p-centro:  #2C5AA6;   /* Centro Democrático (derecha) */
+  --p-verde:   #1FA85C;   /* Coalición Verde Esperanza */
+  --p-radical: #E68A1E;   /* Cambio Radical */
+  --p-liberal: #C0203C;   /* Partido Liberal */
+  --p-otros:   #8C9088;   /* Otros / voto en blanco */
+
+  font-family: var(--f-sans);
+  font-feature-settings: "ss01" 1, "cv11" 1;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  box-sizing: border-box;
+}
+.evt *, .evt *::before, .evt *::after { box-sizing: border-box; }
+
+/* ════════ LIGHT · warm editorial broadsheet ════════ */
+.evt[data-theme="light"] {
+  --bg:        #F1ECDF;
+  --surface:   #FBF8F0;
+  --surface-2: #F2ECDC;
+  --raised:    #FFFFFF;
+  --ink:       #1A211C;
+  --ink-2:     #3C4640;
+  --dim:       #6E7068;
+  --border:    rgba(26, 64, 46, 0.14);
+  --border-2:  rgba(26, 64, 46, 0.28);
+
+  --emerald:        #0E7A4C;
+  --emerald-bright: #138A57;
+  --emerald-ink:    #0A3D27;
+  --emerald-bg:     rgba(31, 168, 92, 0.12);
+
+  --gold:        #A9791F;
+  --gold-bright: #C79328;
+  --gold-bg:     rgba(201, 147, 40, 0.16);
+
+  --good: #1A7A48;
+  --warn: #B9521A;
+  --bad:  #C0203C;
+
+  --grid-line: rgba(26, 64, 46, 0.07);
+  --shadow:    0 1px 2px rgba(26,33,28,0.06), 0 8px 24px rgba(26,33,28,0.10);
+  --shadow-lg: 0 18px 50px rgba(26,33,28,0.18);
+  --glow:      none;
+}
+
+/* ════════ DARK · election-night control room ════════ */
+.evt[data-theme="dark"] {
+  --bg:        #0A130D;
+  --surface:   #0F1E16;
+  --surface-2: #14271C;
+  --raised:    #16301F;
+  --ink:       #EAF4EC;
+  --ink-2:     #C4D6C9;
+  --dim:       #7FA08C;
+  --border:    rgba(94, 222, 158, 0.16);
+  --border-2:  rgba(94, 222, 158, 0.34);
+
+  --emerald:        #34E29A;
+  --emerald-bright: #5DF0B0;
+  --emerald-ink:    #0B2A1C;
+  --emerald-bg:     rgba(52, 226, 154, 0.12);
+
+  --gold:        #ECC65C;
+  --gold-bright: #F6D77E;
+  --gold-bg:     rgba(236, 198, 92, 0.13);
+
+  --good: #34E29A;
+  --warn: #F0A24B;
+  --bad:  #FF6B5E;
+
+  --grid-line: rgba(94, 222, 158, 0.07);
+  --shadow:    0 0 0 1px rgba(94,222,158,0.06), 0 10px 30px rgba(0,0,0,0.5);
+  --shadow-lg: 0 0 0 1px rgba(94,222,158,0.10), 0 24px 60px rgba(0,0,0,0.6);
+  --glow:      0 0 24px rgba(52,226,154,0.18);
+
+  /* party colors brighten slightly for dark legibility */
+  --p-pacto:   #F0584A;
+  --p-centro:  #5B8FE0;
+  --p-verde:   #3FCB7E;
+  --p-radical: #F2A93E;
+  --p-liberal: #E84B62;
+  --p-otros:   #A6ACA2;
+}
+
+/* ── base surface ── */
+.evt {
+  background: var(--bg);
+  color: var(--ink);
+}
+
+/* ── typographic primitives ── */
+.evt .display {
+  font-family: var(--f-display);
+  font-weight: 300;
+  font-style: italic;
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0;
+}
+.evt .eyebrow {
+  font-family: var(--f-mono);
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+.evt .mono { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+.evt .num  { font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1; }
+
+/* ── card ── */
+.evt .card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+}
+.evt .card-raised { background: var(--raised); }
+
+/* ── pills / chips ── */
+.evt .chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--f-mono); font-size: 10px; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 3px 9px; border-radius: 999px;
+  border: 1px solid var(--border-2);
+  color: var(--ink-2);
+}
+
+/* ── live dot ── */
+.evt .livedot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--bad);
+  box-shadow: 0 0 0 0 color-mix(in srgb, var(--bad) 60%, transparent);
+  animation: evt-pulse 1.6s ease-out infinite;
+}
+@keyframes evt-pulse {
+  0%   { box-shadow: 0 0 0 0 color-mix(in srgb, var(--bad) 55%, transparent); }
+  70%  { box-shadow: 0 0 0 7px color-mix(in srgb, var(--bad) 0%, transparent); }
+  100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--bad) 0%, transparent); }
+}
+
+/* ── vote bar fill transition ── */
+.evt .bar-track {
+  background: var(--surface-2);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.evt .bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 1.1s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ── post slide-in ── */
+@keyframes evt-slidein {
+  from { opacity: 0; transform: translateY(-10px) scale(0.99); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.evt .post-new { animation: evt-slidein 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
+
+/* ── ticker ── */
+@keyframes evt-ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.evt .ticker-track { display: inline-flex; white-space: nowrap; animation: evt-ticker 38s linear infinite; }
+.evt .ticker-wrap:hover .ticker-track { animation-play-state: paused; }
+
+/* ── map hotspot pulse ── */
+@keyframes evt-ring {
+  0%   { r: 4; opacity: 0.9; }
+  100% { r: 20; opacity: 0; }
+}
+.evt .hot-ring { transform-box: fill-box; transform-origin: center; }
+
+/* ── count flash ── */
+@keyframes evt-flash { 0% { color: var(--gold-bright); } 100% { color: inherit; } }
+.evt .flash { animation: evt-flash 0.8s ease-out; }
+
+/* ── scrollbars hidden inside dashboards (canvas frames clip) ── */
+.evt .scroll { overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--border-2) transparent; }
+.evt .scroll::-webkit-scrollbar { width: 6px; }
+.evt .scroll::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 3px; }
+
+/* ── language visibility helper ── */
+.evt [data-en], .evt [data-es] { display: none; }
+.evt[lang="en"] [data-en] { display: revert; }
+.evt[lang="es"] [data-es] { display: revert; }
+
+/* ── focus ring ── */
+.evt button:focus-visible, .evt [tabindex]:focus-visible {
+  outline: 2px solid var(--emerald); outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .evt .livedot, .evt .ticker-track, .evt .hot-ring { animation: none !important; }
+}

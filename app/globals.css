@@ -1,0 +1,118 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600&family=Fraunces:opsz,wght@9..144,300..700&display=swap');
+
+:root {
+  --paper: #FAF7F2;
+  --ink: #1C1A15;
+  --accent: #C41E3A;
+  --trust: #0A66C2;
+  --verified: #166534;
+  --warm: #E8DFD0;
+  --border: #D4C9B8;
+}
+
+body {
+  font-family: 'Inter', system_ui, sans-serif;
+}
+
+.display-font {
+  font-family: 'Space Grotesk', 'Inter', system_ui, sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.serif-display {
+  font-family: 'Fraunces', Georgia, serif;
+  font-variation-settings: 'opsz' 144, 'SOFT' 20;
+}
+
+.milton-paper {
+  background-color: #FAF7F2;
+  box-shadow: 0 1px 3px rgba(28, 26, 21, 0.08),
+              inset 0 1px 0 rgba(255,255,255,0.7);
+}
+
+.glaser-card {
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), 
+              box-shadow 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+  border: 1px solid #D4C9B8;
+}
+
+.glaser-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgb(28 26 21 / 0.1), 
+             0 4px 6px -4px rgb(28 26 21 / 0.1);
+}
+
+.section-header {
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+  color: #6B6359;
+  text-transform: uppercase;
+}
+
+.election-bar {
+  transition: width 1.2s cubic-bezier(0.34, 1.56, 0.64, 1), 
+              background-color 0.3s ease;
+  box-shadow: 0 0 8px rgba(196, 30, 58, 0.3);
+}
+
+.x-post {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.x-post.new {
+  animation: slideInPost 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border-color: #C41E3A;
+}
+
+@keyframes slideInPost {
+  from { opacity: 0; transform: translateX(-12px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.pulse-dot {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.metric-value {
+  font-variant-numeric: tabular-nums;
+}
+
+.milton-icon {
+  filter: drop-shadow(0 1px 2px rgb(28 26 21 / 0.1));
+}
+
+.live-dot {
+  animation: livePulse 1.5s ease-in-out infinite;
+}
+
+@keyframes livePulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.custom-svg {
+  shape-rendering: geometricPrecision;
+}
+
+.reasoning-step {
+  animation: fadeInStep 0.4s ease forwards;
+}
+
+.dashboard-grid {
+  background-image: 
+    linear-gradient(#D4C9B8 1px, transparent 1px),
+    linear-gradient(90deg, #D4C9B8 1px, transparent 1px);
+  background-size: 32px 32px;
+  opacity: 0.12;
+}
+
+.hotspot {
+  transition: all 0.3s ease;
+}
+
+.hotspot:hover {
+  transform: scale(1.15);
+  filter: brightness(1.1);
+}
