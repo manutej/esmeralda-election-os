@@ -668,6 +668,121 @@ const coDepts = [
 ];
 window.coDepts = coDepts;
 
+// Full coHex for hexagonal cartogram (from original designs/esmeralda/project/election/data.js)
+// col/row = odd-r offset hex grid for geographic-ish placement
+const coHex = [
+  { id: "guajira",      abbr: "LAG", name: "La Guajira",       col: 6, row: 0, lead: "pacto",   margin: 12, rep: 58 },
+  { id: "atlantico",    abbr: "ATL", name: "Atlántico",        col: 4, row: 1, lead: "pacto",   margin: 11, rep: 71, live: true },
+  { id: "magdalena",    abbr: "MAG", name: "Magdalena",        col: 5, row: 1, lead: "pacto",   margin: 9,  rep: 61 },
+  { id: "cesar",        abbr: "CES", name: "Cesar",            col: 6, row: 1, lead: "pacto",   margin: 6,  rep: 55 },
+  { id: "nsantander",   abbr: "NSA", name: "N. de Santander",  col: 7, row: 1, lead: "centro",  margin: 5,  rep: 49 },
+  { id: "cordoba",      abbr: "COR", name: "Córdoba",          col: 2, row: 2, lead: "radical", margin: 5,  rep: 52 },
+  { id: "sucre",        abbr: "SUC", name: "Sucre",            col: 3, row: 2, lead: "pacto",   margin: 7,  rep: 57 },
+  { id: "bolivar",      abbr: "BOL", name: "Bolívar",          col: 4, row: 2, lead: "pacto",   margin: 8,  rep: 60 },
+  { id: "santander",    abbr: "SAN", name: "Santander",        col: 6, row: 2, lead: "centro",  margin: 3,  rep: 53, live: true },
+  { id: "antioquia",    abbr: "ANT", name: "Antioquia",        col: 2, row: 3, lead: "centro",  margin: 6,  rep: 64, live: true },
+  { id: "boyaca",       abbr: "BOY", name: "Boyacá",           col: 5, row: 3, lead: "pacto",   margin: 2,  rep: 50 },
+  { id: "arauca",       abbr: "ARA", name: "Arauca",           col: 7, row: 3, lead: "pacto",   margin: 3,  rep: 44 },
+  { id: "choco",        abbr: "CHO", name: "Chocó",            col: 1, row: 4, lead: "pacto",   margin: 14, rep: 47 },
+  { id: "caldas",       abbr: "CAL", name: "Caldas",           col: 3, row: 4, lead: "centro",  margin: 3,  rep: 58 },
+  { id: "cundinamarca", abbr: "CUN", name: "Cundinamarca",     col: 4, row: 4, lead: "pacto",   margin: 5,  rep: 66 },
+  { id: "casanare",     abbr: "CAS", name: "Casanare",         col: 6, row: 4, lead: "radical", margin: 5,  rep: 46 },
+  { id: "vichada",      abbr: "VIC", name: "Vichada",          col: 8, row: 4, lead: "radical", margin: 6,  rep: 38 },
+  { id: "risaralda",    abbr: "RIS", name: "Risaralda",        col: 2, row: 5, lead: "centro",  margin: 2,  rep: 60 },
+  { id: "quindio",      abbr: "QUI", name: "Quindío",          col: 3, row: 5, lead: "verde",   margin: 2,  rep: 62 },
+  { id: "tolima",       abbr: "TOL", name: "Tolima",           col: 4, row: 5, lead: "pacto",   margin: 3,  rep: 55 },
+  { id: "bogota",       abbr: "BOG", name: "Bogotá D.C.",      col: 5, row: 5, lead: "pacto",   margin: 8,  rep: 71, live: true },
+  { id: "meta",         abbr: "MET", name: "Meta",             col: 6, row: 5, lead: "radical", margin: 4,  rep: 49 },
+  { id: "valle",        abbr: "VAC", name: "Valle del Cauca",  col: 1, row: 6, lead: "verde",   margin: 4,  rep: 58 },
+  { id: "huila",        abbr: "HUI", name: "Huila",            col: 4, row: 6, lead: "centro",  margin: 2,  rep: 53 },
+  { id: "guaviare",     abbr: "GUV", name: "Guaviare",         col: 6, row: 6, lead: "radical", margin: 3,  rep: 35 },
+  { id: "guainia",      abbr: "GNA", name: "Guainía",          col: 8, row: 6, lead: "verde",   margin: 2,  rep: 31 },
+  { id: "cauca",        abbr: "CAU", name: "Cauca",            col: 2, row: 7, lead: "pacto",   margin: 9,  rep: 50 },
+  { id: "caqueta",      abbr: "CAQ", name: "Caquetá",          col: 4, row: 7, lead: "pacto",   margin: 3,  rep: 42 },
+  { id: "vaupes",       abbr: "VAU", name: "Vaupés",           col: 6, row: 7, lead: "verde",   margin: 2,  rep: 33 },
+  { id: "narino",       abbr: "NAR", name: "Nariño",           col: 1, row: 8, lead: "pacto",   margin: 12, rep: 66 },
+  { id: "putumayo",     abbr: "PUT", name: "Putumayo",         col: 3, row: 8, lead: "pacto",   margin: 6,  rep: 44 },
+  { id: "amazonas",     abbr: "AMA", name: "Amazonas",         col: 5, row: 9, lead: "verde",   margin: 3,  rep: 31 },
+];
+window.coHex = coHex;
+
+// Hex rendering logic (ported from designs/esmeralda/project/election/hexmap.jsx for vanilla JS)
+const HEX_S = 18;
+const HEX_W = Math.sqrt(3) * HEX_S;
+const HEX_H = 2 * HEX_S;
+const HEX_VSTEP = 0.75 * HEX_H;
+
+function hexPoints(cx, cy, size) {
+  const s = size || HEX_S;
+  let p = "";
+  for (let i = 0; i < 6; i++) {
+    const a = (Math.PI / 180) * (60 * i - 90);
+    p += (cx + s * Math.cos(a)).toFixed(1) + "," + (cy + s * Math.sin(a)).toFixed(1) + " ";
+  }
+  return p.trim();
+}
+
+function renderHexGrid() {
+  const svg = document.getElementById('pulse-svg');
+  if (!svg || !window.coHex) return;
+
+  const cells = window.coHex;
+  const placed = cells.map(d => {
+    const cx = d.col * HEX_W + (d.row % 2 ? HEX_W / 2 : 0);
+    const cy = d.row * HEX_VSTEP;
+    return { ...d, cx, cy };
+  });
+
+  const xs = placed.map(p => p.cx), ys = placed.map(p => p.cy);
+  const pad = HEX_S + 4;
+  const minX = Math.min(...xs) - pad, maxX = Math.max(...xs) + pad;
+  const minY = Math.min(...ys) - pad, maxY = Math.max(...ys) + pad;
+  const vb = [minX, minY, maxX - minX, maxY - minY].map(n => n.toFixed(1)).join(" ");
+
+  const intensity = (m) => 0.35 + Math.min(1, Math.abs(m) / 14) * 0.55;
+
+  let content = `
+    <defs>
+      <filter id="hexGlow" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="1.5"/>
+      </filter>
+    </defs>
+  `;
+
+  placed.forEach(d => {
+    const party = PARTIES[d.lead] || PARTIES.otros;
+    const col = party.color;
+    const op = intensity(d.margin || 0);
+    const isLive = !!d.live;
+    const cx = d.cx, cy = d.cy;
+
+    content += `
+      <g class="hex-hotspot" data-dept="${d.id}" data-lead="${d.lead}" style="cursor:pointer">
+        ${isLive ? `
+        <polygon points="${hexPoints(cx, cy, HEX_S + 3)}" fill="none" stroke="${col}" stroke-width="1.4" opacity="0.6">
+          <animate attributeName="stroke-opacity" values="0.6;0.15;0.6" dur="2.0s" repeatCount="indefinite"/>
+        </polygon>` : ''}
+        <polygon points="${hexPoints(cx, cy)}" fill="${col}" fill-opacity="${op}" stroke="${col}" stroke-opacity="0.8" stroke-width="1"/>
+        <text x="${cx}" y="${cy - 1}" text-anchor="middle" fill="var(--ink)" font-family="var(--f-mono)" font-size="7.5" font-weight="700" style="paint-order: stroke; stroke: var(--bg); stroke-width: 2; stroke-linejoin: round;">${d.abbr}</text>
+        <text x="${cx}" y="${cy + 8}" text-anchor="middle" fill="var(--ink)" font-family="var(--f-mono)" font-size="6" font-weight="700" opacity="0.75" style="paint-order: stroke; stroke: var(--bg); stroke-width: 1.6;">+${d.margin}</text>
+      </g>
+    `;
+  });
+
+  svg.setAttribute('viewBox', vb);
+  svg.innerHTML = content;
+
+  // Simple hover (title + basic console for now; can wire to tooltip later)
+  const hotspots = svg.querySelectorAll('.hex-hotspot');
+  hotspots.forEach(g => {
+    const id = g.getAttribute('data-dept');
+    const d = cells.find(x => x.id === id);
+    if (d) {
+      g.setAttribute('title', `${d.name} · ${PARTIES[d.lead]?.abbr || d.lead} +${d.margin} · ${d.rep}% reporting`);
+    }
+  });
+}
+
 let region = {
   id: "colombia",
   flag: "🇨🇴",
@@ -1327,7 +1442,7 @@ function renderAll() {
   renderVoteBars();
   renderXFeed();
   renderResultsTable();
-  renderPulseMap();
+  renderHexGrid();
   renderHexMap();
   // BERTIN live visuals
   renderBertinComparison();
