@@ -832,20 +832,25 @@ function renderTicker() {
 function renderKeyRaces() {
   const container = document.getElementById('key-races');
   if (!container) return;
+  const maxPct = Math.max(...region.keyRaces.map(r => r.pct));
   container.innerHTML = region.keyRaces.map(r => {
     const p = PARTIES[r.lead];
     const status = r.status[state.lang];
+    const barWidth = (r.pct / maxPct) * 100;
     return `
-      <div class="flex items-center gap-3 text-sm">
-        <span style="width:9px;height:9px;border-radius:2px;background:${p.color};flex-shrink:0"></span>
+      <div class="flex items-center gap-2 text-sm">
+        <span style="width:8px;height:8px;border-radius:2px;background:${p.color};flex-shrink:0"></span>
         <div class="flex-1 min-w-0">
-          <div class="flex items-baseline justify-between">
-            <span class="font-semibold">${r.name}</span>
-            <span class="font-mono text-xs text-[var(--dim)]">${r.pct}%</span>
+          <div class="flex items-baseline justify-between mb-0.5">
+            <span class="font-semibold text-[12px]">${r.name}</span>
+            <span class="font-mono text-[10px] text-[var(--dim)]">${r.pct}%</span>
           </div>
-          <div class="flex items-center gap-2">
-            <span class="chip py-0.5 px-2 text-[9px]" style="border-color:var(--border-2);color:${r.lead==='centro'?'var(--warn)':(r.lead==='verde'?'var(--good)':'var(--emerald)')};">${status}</span>
-            <span class="text-[10px] text-[var(--dim)]">${r.note}</span>
+          <div class="h-1.5 bg-[var(--surface-2)] rounded-full overflow-hidden mb-1">
+            <div style="width:${barWidth}%; height:100%; background:${p.color};"></div>
+          </div>
+          <div class="flex items-center gap-1.5 text-[9px]">
+            <span class="chip py-0 px-1.5" style="font-size:8px; border-color:var(--border-2); color:${r.lead==='centro'?'var(--warn)':(r.lead==='verde'?'var(--good)':'var(--emerald)')};">${status}</span>
+            <span class="text-[var(--dim)]">${r.note}</span>
           </div>
         </div>
       </div>`;
