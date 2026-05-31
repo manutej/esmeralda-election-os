@@ -810,132 +810,237 @@ function renderMetrics() {
   sent.style.color = region.sentiment >= 0 ? 'var(--good)' : 'var(--bad)';
 }
 
-// Enhanced Pulse map: Better Colombia overlay + rich hover tooltips (bilingual, live data)
+// Production-ready PULSO GEOGRÁFICO — fully SVG + vanilla JS, live-updatable, rich bilingual tooltips
+// Uses global coDepts (coDepts/coHex style). Every hotspot is a pure-SVG interactive group.
 function renderPulseMap() {
   const svg = document.getElementById('pulse-svg');
-  const bubblesContainer = document.getElementById('map-bubbles');
+  if (!svg) return;
+
+  const container = svg.parentElement; // .relative for positioning tooltip
   const tooltip = document.getElementById('map-tooltip');
-  if (!svg || !bubblesContainer || !tooltip) return;
+  if (!window.coDepts || !tooltip) return;
 
-  // Clear previous
-  svg.innerHTML = '';
-  bubblesContainer.innerHTML = '';
+  const depts = window.coDepts;
+  const lang = state.lang || 'es';
 
-  // Improved recognizable Colombia country outline (simplified but much better than leaf)
-  svg.innerHTML = `
+  // live count
+  const liveEl = document.getElementById('hex-live-count');
+  if (liveEl) liveEl.textContent = depts.filter(d => d.live).length;
+
+  // Recognizable clean Colombia outline (stylized executive, identifiable silhouette + key region hints)
+  // Tuned to enclose the 9 priority hotspots. Includes faint internal geographic dividers.
+  const COLOMBIA_OUTLINE = "M92 48 Q138 18 208 31 Q272 22 328 52 Q368 98 381 148 Q372 198 332 229 Q280 257 202 245 Q138 261 98 210 Q68 148 92 48 Z";
+
+  let content = `
     <defs>
-      <filter id="mapglow" x="-50%" y="-50%" width="200%" height="200%">
-        <feGaussianBlur in="SourceGraphic" stdDeviation="1.5"/>
+      <!-- Strong executive glow for pulses and selected -->
+      <filter id="pulseGlow" x="-80%" y="-80%" width="260%" height="260%">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="2.8" result="b"/>
+        <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+      <filter id="softTerritory" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="4.5"/>
       </filter>
     </defs>
-    <!-- Main Colombia landmass (more accurate simplified shape) -->
-    <path d="M85 55 Q130 22 195 38 Q265 25 320 55 Q355 95 372 145 Q365 195 325 225 Q275 255 205 242 Q145 265 105 215 Q70 155 85 55" 
-          fill="#0F1E16" stroke="var(--emerald)" stroke-width="2.2" opacity="0.65"/>
-    <!-- Subtle internal department hints (light strokes) -->
-    <path d="M140 90 Q195 85 220 120" fill="none" stroke="var(--border)" stroke-width="0.8" opacity="0.4"/>
-    <path d="M175 140 Q230 155 255 190" fill="none" stroke="var(--border)" stroke-width="0.8" opacity="0.4"/>
-    <path d="M120 175 Q170 195 195 230" fill="none" stroke="var(--border)" stroke-width="0.8" opacity="0.4"/>
+
+    <!-- Land base -->
+    <path d="${COLOMBIA_OUTLINE}" fill="#0C1A14" />
+    <!-- Primary country outline (clean, identifiable) -->
+    <path d="${COLOMBIA_OUTLINE}" fill="none" stroke="var(--emerald)" stroke-width="2.6" stroke-linejoin="round" opacity="0.72"/>
+    <!-- Secondary crisp highlight -->
+    <path d="${COLOMBIA_OUTLINE}" fill="none" stroke="#2E7A5F" stroke-width="0.85" stroke-linejoin="round" opacity="0.55"/>
+
+    <!-- Subtle major geographic dividers (Andes ridge + Llanos transition) for "department boundaries" feel -->
+    <path d="M122 58 Q168 92 185 138 Q197 178 172 218" fill="none" stroke="var(--border)" stroke-width="1" opacity="0.22" stroke-dasharray="2.5 3.5"/>
+    <path d="M245 68 Q268 115 265 168 Q282 205 305 228" fill="none" stroke="var(--border)" stroke-width="0.9" opacity="0.18" stroke-dasharray="2 4"/>
   `;
 
-  // Department data for interaction (extended from existing region + heavy signals)
-  const depts = [
-    { id: 'atlantico', name: {es:'Atlántico', en:'Atlántico'}, x:148, y:72,  lead:'pacto',   xproj:36.1, margin:2.1, note:{es:'Efecto Westcol fuerte en costa', en:'Strong Westcol effect on coast'}, color:'var(--p-pacto)' },
-    { id: 'antioquia', name: {es:'Antioquia', en:'Antioquia'}, x:192, y:118, lead:'centro',  xproj:38.4, margin:7.5, note:{es:'Espriella +7.8 rural post-Westcol', en:'Espriella +7.8 rural surge post-Westcol'}, color:'var(--p-centro)' },
-    { id: 'santander', name: {es:'Santander', en:'Santander'}, x:258, y:98,  lead:'centro',  xproj:38.7, margin:5.9, note:{es:'Derecha consolidada, Espriella robando votos', en:'Right consolidated, Espriella taking votes'}, color:'var(--p-centro)' },
-    { id: 'cundi',     name: {es:'Cundinamarca / Bogotá', en:'Cundinamarca / Bogotá'}, x:232, y:162, lead:'pacto',   xproj:43.7, margin:3.5, note:{es:'Alta participación joven y popular', en:'High youth + popular turnout'}, color:'var(--p-pacto)' },
-    { id: 'valle',     name: {es:'Valle del Cauca', en:'Valle del Cauca'}, x:148, y:198, lead:'verde',   xproj:40.9, margin:4.1, note:{es:'Verde mantiene Cali, Espriella sube en Jamundí', en:'Verde holds Cali, Espriella rising in Jamundí'}, color:'var(--p-verde)' },
-    { id: 'meta',      name: {es:'Meta', en:'Meta'}, x:292, y:182, lead:'radical', xproj:33.0, margin:4.0, note:{es:'Participación rural activa', en:'Active rural participation'}, color:'var(--p-radical)' },
-    { id: 'narino',    name: {es:'Nariño', en:'Nariño'}, x:132, y:238, lead:'pacto',   xproj:30.4, margin:3.3, note:{es:'Madrugar rural +11 vs 2022', en:'Rural early voting +11 vs 2022'}, color:'var(--p-pacto)' },
-  ];
+  // Interactive department hotspots (pure SVG groups)
+  depts.forEach((d) => {
+    const party = PARTIES[d.lead] || PARTIES.otros;
+    const col = party.color;
+    const op = Math.max(0.58, Math.min(0.96, 0.52 + Math.abs(d.margin || 4) / 17));
+    const r = d.r || 14;
+    const isLive = !!d.live;
+    const x = d.x, y = d.y;
 
-  // Create interactive bubbles + labels
-  depts.forEach(d => {
-    const wrap = document.createElement('div');
-    wrap.className = 'map-bubble';
-    wrap.style.left = d.x + 'px';
-    wrap.style.top = d.y + 'px';
-    wrap.style.width = '34px';
-    wrap.style.height = '34px';
-    wrap.style.background = d.color;
-    wrap.style.border = '2px solid #0B1510';
-    wrap.style.fontSize = '11px';
-    wrap.style.fontWeight = '700';
-    wrap.style.boxShadow = '0 0 0 3px var(--bg), 0 3px 10px rgba(0,0,0,0.5)';
-    wrap.textContent = Math.round(d.xproj);
-    wrap.dataset.dept = d.id;
+    content += `
+      <g class="dept-hotspot" data-dept="${d.id}" data-lead="${d.lead}">
+        <!-- Territory highlight (soft region blob for visual density + key region emphasis) -->
+        <ellipse cx="${x}" cy="${y}" rx="${r * 1.55}" ry="${r * 1.32}" fill="${col}" opacity="0.13" filter="url(#softTerritory)"/>
 
-    // Hover handlers for rich tooltip
-    wrap.onmouseenter = (e) => showDeptTooltip(e, d);
-    wrap.onmouseleave = hideDeptTooltip;
-    wrap.onclick = () => selectDept(d.id);
+        <!-- Main colored pulse disc -->
+        <circle cx="${x}" cy="${y}" r="${r}" fill="${col}" opacity="${op}" filter="url(#pulseGlow)"/>
+        
+        <!-- Live pulsing ring (only for live depts) -->
+        ${isLive ? `
+        <circle cx="${x}" cy="${y}" r="${r + 3.5}" fill="none" stroke="${col}" stroke-width="1.65" opacity="0.65">
+          <animate attributeName="r" values="${r+3.5};${r+10.5};${r+3.5}" dur="2.1s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0.65;0.12;0.65" dur="2.1s" repeatCount="indefinite"/>
+        </circle>` : ''}
 
-    bubblesContainer.appendChild(wrap);
+        <!-- Inner light ring for executive polish -->
+        <circle cx="${x}" cy="${y}" r="${r * 0.68}" fill="none" stroke="rgba(255,255,255,0.75)" stroke-width="1.35"/>
+
+        <!-- X-Projection % (large, crisp, executive) -->
+        <text x="${x}" y="${y + 3.5}" text-anchor="middle" fill="#fff" 
+              font-family="var(--f-mono, ui-monospace, monospace)" font-size="${r >= 16 ? '11.5' : '10'}" font-weight="800"
+              style="paint-order: stroke; stroke: rgba(0,0,0,0.55); stroke-width: 2.2; stroke-linejoin: round;">${Math.round(d.xProj)}</text>
+
+        <!-- Compact city label (always visible, dense executive style) -->
+        <text x="${x}" y="${y + r + 9}" text-anchor="middle" fill="var(--ink)" 
+              font-family="var(--f-sans, system-ui, -apple-system)" font-size="7" font-weight="600" opacity="0.82"
+              style="paint-order: stroke; stroke: #0B1510; stroke-width: 2.4; stroke-linejoin: round;">${d.city}</text>
+
+        <!-- generous invisible hit area for excellent hover/tap UX -->
+        <circle cx="${x}" cy="${y}" r="${r + 11}" fill="transparent"/>
+      </g>
+    `;
   });
 
-  // Update live count
-  const liveCount = document.getElementById('hex-live-count');
-  if (liveCount) liveCount.textContent = depts.filter(d => d.margin > 4).length;
+  svg.innerHTML = content;
+
+  // Wire interactivity (hover + tap) — pure vanilla, no libs
+  const hotspots = svg.querySelectorAll('.dept-hotspot');
+  hotspots.forEach((g) => {
+    const id = g.getAttribute('data-dept');
+
+    g.addEventListener('mouseenter', (ev) => {
+      showDeptTooltip(id, ev, container, tooltip);
+    });
+    g.addEventListener('mouseleave', () => hideDeptTooltip(tooltip));
+    g.addEventListener('mousemove', (ev) => positionMapTooltip(ev, container, tooltip));
+
+    // Desktop click = flash + tooltip pin briefly
+    g.addEventListener('click', (ev) => {
+      showDeptTooltip(id, ev, container, tooltip);
+      selectDept(id);
+      if (tooltip) {
+        tooltip.dataset.pinned = '1';
+        setTimeout(() => {
+          if (tooltip && tooltip.dataset.pinned === '1') {
+            hideDeptTooltip(tooltip);
+            delete tooltip.dataset.pinned;
+          }
+        }, 2400);
+      }
+    });
+
+    // Mobile tap support
+    g.addEventListener('touchstart', (ev) => {
+      ev.preventDefault();
+      showDeptTooltip(id, ev, container, tooltip);
+      selectDept(id);
+    }, { passive: false });
+  });
+
+  // Global safety: hide tooltip on container leave / click outside hotspots
+  if (!container._pulseHandlersAttached) {
+    container.addEventListener('mouseleave', () => hideDeptTooltip(tooltip));
+    document.addEventListener('click', (e) => {
+      if (!container.contains(e.target)) hideDeptTooltip(tooltip);
+    }, { once: false, capture: true });
+    container._pulseHandlersAttached = true;
+  }
 }
 
-function showDeptTooltip(e, dept) {
-  const tooltip = document.getElementById('map-tooltip');
-  if (!tooltip) return;
+// Beautiful CETI-dark bilingual tooltip (matches Control Room aesthetic exactly)
+function showDeptTooltip(deptId, evt, container, tooltipEl) {
+  const tooltip = tooltipEl || document.getElementById('map-tooltip');
+  if (!tooltip || !window.coDepts) return;
 
-  const lang = document.body.getAttribute('lang') || 'es';
-  const name = dept.name[lang] || dept.name.es;
-  const leadParty = window.EVT ? (window.EVT.parties || {})[dept.lead] : null;
-  const partyName = leadParty ? leadParty.full[lang] : dept.lead;
+  const dept = window.coDepts.find((dd) => dd.id === deptId);
+  if (!dept) return;
 
-  document.getElementById('tooltip-title').textContent = name;
-  document.getElementById('tooltip-lead').innerHTML = `
-    <span style="width:10px;height:10px;border-radius:2px;background:${dept.color};display:inline-block;"></span>
-    <span class="font-semibold">${partyName}</span>
-    <span class="font-mono ml-auto">${dept.xproj.toFixed(1)}%</span>
-  `;
-  document.getElementById('tooltip-stats').innerHTML = `+${dept.margin} margen • Actividad alta`;
-  document.getElementById('tooltip-note').textContent = dept.note[lang] || '';
+  const lang = state.lang || 'es';
+  const party = PARTIES[dept.lead] || PARTIES.otros;
+  const leadFull = party.full ? party.full[lang] : party.abbr;
 
-  // Position tooltip near cursor / element, inside the card
-  const rect = e.currentTarget.getBoundingClientRect();
-  const mapRect = e.currentTarget.closest('.relative').getBoundingClientRect();
+  // Title: bilingual-ready department + city
+  const title = document.getElementById('tooltip-title');
+  if (title) title.innerHTML = `${dept.name[lang]} <span style="font-weight:400;opacity:0.55;font-size:10px">· ${dept.city}</span>`;
 
-  tooltip.style.left = (rect.left - mapRect.left + 38) + 'px';
-  tooltip.style.top = (rect.top - mapRect.top - 10) + 'px';
+  // Lead party + color + margin
+  const leadEl = document.getElementById('tooltip-lead');
+  if (leadEl) {
+    leadEl.innerHTML = `
+      <span style="width:9px;height:9px;border-radius:2px;background:${party.color};display:inline-block;flex-shrink:0;margin-right:5px;box-shadow:0 0 0 1px rgba(255,255,255,0.2)"></span>
+      <span style="color:${party.color};font-weight:700;letter-spacing:-0.1px">${leadFull}</span>
+      <span style="margin-left:auto;font-family:var(--f-mono);font-size:10px;opacity:0.85">+${(dept.margin||0).toFixed(1)}</span>
+    `;
+  }
+
+  // Stats row: X-Proj, Rep %, Variance
+  const stats = document.getElementById('tooltip-stats');
+  if (stats) {
+    const v = dept.variance || 0;
+    const vColor = v >= 0 ? 'var(--good)' : 'var(--bad)';
+    stats.innerHTML = `
+      X-Proj <span style="color:${party.color};font-weight:700">${(dept.xProj||0).toFixed(1)}%</span>
+      <span style="opacity:0.4;margin:0 3px">·</span>
+      Rep ${(dept.rep||0)}%
+      <span style="opacity:0.4;margin:0 3px">·</span>
+      Var <span style="color:${vColor};font-weight:700">${v >= 0 ? '+' : ''}${v.toFixed(1)}</span>
+    `;
+  }
+
+  // Heavy signal note
+  const note = document.getElementById('tooltip-note');
+  if (note) note.textContent = (dept.note && dept.note[lang]) || '';
+
+  // Show + position
+  tooltip.style.display = 'block';
   tooltip.classList.remove('hidden');
-  tooltip.classList.add('flex', 'flex-col');
+  positionMapTooltip(evt, container, tooltip);
 }
 
-function hideDeptTooltip() {
-  const tooltip = document.getElementById('map-tooltip');
-  if (tooltip) {
-    tooltip.classList.add('hidden');
-    tooltip.classList.remove('flex', 'flex-col');
-  }
+function positionMapTooltip(evt, container, tooltip) {
+  if (!tooltip || !container) return;
+  const cRect = container.getBoundingClientRect();
+  let x = (evt.clientX || (evt.touches && evt.touches[0].clientX) || 0) - cRect.left + 11;
+  let y = (evt.clientY || (evt.touches && evt.touches[0].clientY) || 0) - cRect.top - 6;
+
+  const tipW = 235;
+  const tipH = 108;
+
+  // Smart flip to stay inside card
+  if (x + tipW > container.clientWidth - 6) x = (evt.clientX - cRect.left) - tipW - 14;
+  if (y + tipH > container.clientHeight - 4) y = (evt.clientY - cRect.top) - tipH - 8;
+  if (x < 6) x = 6;
+  if (y < 4) y = 4;
+
+  tooltip.style.left = x + 'px';
+  tooltip.style.top = y + 'px';
 }
 
-function selectDept(id) {
-  // Bonus: clicking a dept can highlight related key race or flash the X feed
-  const keyRaces = document.getElementById('key-races');
-  if (keyRaces) {
-    keyRaces.style.transition = 'box-shadow 0.2s';
-    keyRaces.style.boxShadow = '0 0 0 3px var(--emerald)';
-    setTimeout(() => { keyRaces.style.boxShadow = 'none'; }, 900);
-  }
-  // Future: could filter X feed or update other panels
+function hideDeptTooltip(tooltipEl) {
+  const tooltip = tooltipEl || document.getElementById('map-tooltip');
+  if (!tooltip) return;
+  tooltip.style.display = 'none';
+  tooltip.classList.add('hidden');
+  delete tooltip.dataset.pinned;
 }
 
-// Hex cartogram (simplified visual in same card area if needed)
-function renderHexMap() {
-  // For now the pulse bubbles + SVG serve the visual; full hex can be added in future iteration
-  // This keeps density high and matches the provided screenshot aesthetic
-}
-
-// Select dept (demo)
+// Existing selectDept kept for side effects (key races flash etc) — enhanced lightly
 function selectDept(id) {
   const map = document.querySelector('#pulse-svg');
-  if (map) map.style.filter = 'brightness(1.1)';
-  setTimeout(() => { if (map) map.style.filter = ''; }, 420);
-  // Could expand to show detail panel
+  if (map) {
+    map.style.transition = 'filter .12s';
+    map.style.filter = 'brightness(1.18) saturate(1.15)';
+    setTimeout(() => { if (map) map.style.filter = ''; }, 380);
+  }
+  // Light pulse on matching key race row if present
+  const keyRaces = document.getElementById('key-races');
+  if (keyRaces) {
+    keyRaces.style.transition = 'box-shadow .2s';
+    keyRaces.style.boxShadow = '0 0 0 2.5px var(--emerald)';
+    setTimeout(() => { if (keyRaces) keyRaces.style.boxShadow = ''; }, 820);
+  }
+}
+
+// Hex cartogram placeholder (unchanged)
+function renderHexMap() {
+  // Future: can drop EVTHexMap here using same coDepts → coHex data
 }
 
 // Render all dynamic parts
@@ -991,6 +1096,24 @@ function startLiveSimulation() {
     region.confidence = Math.min(94, region.confidence + (Math.random()-0.5)*0.3);
     region.turnout = Math.min(67, region.turnout + Math.random()*0.04);
     state.lastUpdate = 0;
+
+    // Live geographic pulse updates — nudges margins, xProj, variance, occasional live flag on coDepts
+    // This makes the SVG map re-render colors, opacities, numbers and pulsing rings live.
+    if (window.coDepts && window.coDepts.length) {
+      const n = window.coDepts.length;
+      // Nudge 2 depts each tick for dense executive feel
+      for (let k = 0; k < 2; k++) {
+        const idx = Math.floor(Math.random() * n);
+        const d = window.coDepts[idx];
+        if (!d) continue;
+        d.xProj = Math.max(25, Math.min(51, d.xProj + (Math.random() - 0.48) * 0.95));
+        d.margin = Math.max(0.6, Math.min(13.5, (d.margin || 4) + (Math.random() - 0.5) * 0.75));
+        d.variance = (d.variance || 0) + (Math.random() - 0.5) * 0.7;
+        if (Math.random() < 0.14) d.live = !d.live; // occasional live status flip for visual interest
+        // Keep reporting % slowly climbing
+        if (d.rep) d.rep = Math.min(89, d.rep + (Math.random() < 0.6 ? 0.6 : 0.2));
+      }
+    }
 
     renderAll();
     updateLiveCOTClock();
@@ -1067,8 +1190,8 @@ function boot() {
     }
   });
 
-  // Expose for console debugging
-  window.ESMERALDA = { state, region, switchLang, setTheme };
+  // Expose for console debugging + external control
+  window.ESMERALDA = { state, region, coDepts: window.coDepts, switchLang, setTheme, renderPulseMap };
   
   console.log('%c[Esmeralda] Colombia Election Tracker 2026 — Control Room faithful build. Heavy X data wired. Bilingual clean toggle active.', 'color:#34E29A');
 }
