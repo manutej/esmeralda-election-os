@@ -706,6 +706,25 @@ const coHex = [
 ];
 window.coHex = coHex;
 
+// Heavy evaluation / cross-check merge: Override the 9 priority depts in coHex with fresh data from coDepts (which reflects the latest heavy seed JSON + subsequent Grok research updates for x_pred, variance, signals like Westcol momentum).
+// This ensures the hexagonal panel uses ACTUAL current data for key areas (Antioquia, Atlántico, etc.), not just the original static sample from designs.
+// For the other ~23 depts, we retain the design baseline structure/positions for the full cartogram view.
+// Numbers in hex: prefer xProj (fresh projection) or margin; intensity based on strength.
+const freshMap = {};
+coDepts.forEach(d => { freshMap[d.id] = d; });
+coHex.forEach(h => {
+  const f = freshMap[h.id];
+  if (f) {
+    h.lead = f.lead;
+    h.margin = f.margin;
+    h.rep = f.rep;
+    h.live = !!f.live;
+    h.xProj = f.xProj;  // for display and intensity
+    h.note = f.note;
+    h.variance = f.variance;
+  }
+});
+
 // Hex rendering logic (ported from designs/esmeralda/project/election/hexmap.jsx for vanilla JS)
 const HEX_S = 18;
 const HEX_W = Math.sqrt(3) * HEX_S;
@@ -752,9 +771,12 @@ function renderHexGrid() {
   placed.forEach(d => {
     const party = PARTIES[d.lead] || PARTIES.otros;
     const col = party.color;
-    const op = intensity(d.margin || 0);
+    const strength = d.xProj || Math.abs(d.margin || 0);
+    const op = intensity(strength);
     const isLive = !!d.live;
     const cx = d.cx, cy = d.cy;
+    const num = d.xProj ? d.xProj.toFixed(0) + '%' : '+' + d.margin;
+    const label = d.xProj ? d.xProj.toFixed(0) + '%' : '+' + d.margin;
 
     content += `
       <g class="hex-hotspot" data-dept="${d.id}" data-lead="${d.lead}" style="cursor:pointer">
@@ -764,7 +786,7 @@ function renderHexGrid() {
         </polygon>` : ''}
         <polygon points="${hexPoints(cx, cy)}" fill="${col}" fill-opacity="${op}" stroke="${col}" stroke-opacity="0.8" stroke-width="1"/>
         <text x="${cx}" y="${cy - 1}" text-anchor="middle" fill="var(--ink)" font-family="var(--f-mono)" font-size="7.5" font-weight="700" style="paint-order: stroke; stroke: var(--bg); stroke-width: 2; stroke-linejoin: round;">${d.abbr}</text>
-        <text x="${cx}" y="${cy + 8}" text-anchor="middle" fill="var(--ink)" font-family="var(--f-mono)" font-size="6" font-weight="700" opacity="0.75" style="paint-order: stroke; stroke: var(--bg); stroke-width: 1.6;">+${d.margin}</text>
+        <text x="${cx}" y="${cy + 8}" text-anchor="middle" fill="var(--ink)" font-family="var(--f-mono)" font-size="6" font-weight="700" opacity="0.75" style="paint-order: stroke; stroke: var(--bg); stroke-width: 1.6;">${label}</text>
       </g>
     `;
   });
