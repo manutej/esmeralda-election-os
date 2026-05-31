@@ -168,6 +168,23 @@
 .evt .hex:hover { transform: scale(1.05); }
 .evt .hex.selected { stroke: var(--gold-bright); stroke-width: 2.5; }
 
+/* Improved Geographic Pulse Map */
+.evt .dept-group { transition: filter .12s ease; }
+.evt .dept-group:hover { filter: brightness(1.15) saturate(1.1); }
+.evt .dept-group:hover circle { stroke: var(--gold-bright); stroke-width: 2; }
+.evt #map-tooltip {
+  box-shadow: 0 10px 30px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.04) inset;
+  backdrop-filter: blur(6px);
+  font-feature-settings: "tnum";
+  transition: opacity .08s ease;
+}
+.evt #map-tooltip .tooltip-accent {
+  height: 3px;
+  background: linear-gradient(to right, var(--emerald), var(--gold));
+  border-radius: 3px 3px 0 0;
+  margin: -1px -1px 6px -1px;
+}
+
 /* Table */
 .evt .results-row { border-bottom: 1px solid var(--border); transition: background .1s; }
 .evt .results-row:hover { background: var(--surface-2); }
@@ -343,14 +360,15 @@
         <!-- City bubbles positioned -->
         <div id="map-bubbles" class="absolute inset-0"></div>
 
-        <!-- Rich hover tooltip (CETI style) -->
+        <!-- Rich hover tooltip (CETI style - improved) -->
         <div id="map-tooltip" 
-             class="hidden absolute z-50 pointer-events-none px-3 py-2 rounded-lg text-xs shadow-xl border"
-             style="background: var(--surface); border-color: var(--border-2); color: var(--ink); min-width: 180px; max-width: 240px;">
-          <div id="tooltip-title" class="font-bold text-[13px] mb-0.5"></div>
-          <div id="tooltip-lead" class="flex items-center gap-2 text-[12px]"></div>
-          <div id="tooltip-stats" class="text-[11px] text-[var(--dim)] mt-1 font-mono"></div>
-          <div id="tooltip-note" class="text-[10px] text-[var(--ink-2)] mt-1 leading-snug"></div>
+             class="hidden absolute z-50 pointer-events-none px-3 py-2.5 rounded-xl text-xs shadow-2xl border"
+             style="background: var(--surface); border-color: var(--border-2); color: var(--ink); min-width: 192px; max-width: 252px; box-shadow: 0 12px 32px rgba(0,0,0,0.5);">
+          <div class="tooltip-accent"></div>
+          <div id="tooltip-title" class="font-bold text-[13px] tracking-[-0.1px] mb-1"></div>
+          <div id="tooltip-lead" class="flex items-center gap-1.5 text-[12px] font-medium mb-0.5"></div>
+          <div id="tooltip-stats" class="text-[10.5px] text-[var(--dim)] mt-0.5 font-mono tracking-tight"></div>
+          <div id="tooltip-note" class="text-[10px] text-[var(--ink-2)] mt-1.5 leading-tight border-t border-[var(--border)] pt-1.5"></div>
         </div>
       </div>
 
