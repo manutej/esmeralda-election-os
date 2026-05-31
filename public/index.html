@@ -575,7 +575,7 @@
           <div class="bertin-legend">Clear bars • X-Proj in party color</div>
         </div>
         <div id="bertin-comparison" class="space-y-px"></div>
-        <div class="bertin-legend mt-1">Gray bar = official counted (real votes, started 16:00 COT). Colored bar = X projection (live signals). Green/Red pill = X minus Official variance. ~14% national escrutiado so far.</div>
+        <div class="bertin-legend mt-1">Gray bar = official counted (real votes). Colored bar = X Sentiment Projection (independent crowdsourced check). Divergencia = posible señal de manipulación o error en conteo oficial. X actúa como segunda verificación ciudadana.</div>
       </div>
 
       <!-- 2. Sparklines for recency (15m scheduler heavy pulls). Pure position + value for trend/momentum. -->
@@ -618,7 +618,7 @@
         <div class="eyebrow">RESULTADOS EN VIVO</div>
         <div class="flex items-center gap-2">
           <span class="chip" style="font-size:9px;">EN VIVO</span>
-          <span class="mono text-xs text-[var(--dim)]">~14% escrutado · conteo oficial desde 16:00 COT + proyecciones X</span>
+          <span class="mono text-xs text-[var(--dim)]">~14% escrutado (oficial) · X Sentiment = verificación ciudadana independiente</span>
         </div>
       </div>
       <table class="w-full text-sm">
@@ -639,17 +639,20 @@
 
     <!-- Source-Trace / Reasoning -->
     <div class="card p-5 card-raised">
-      <div class="eyebrow mb-2" style="color:var(--gold);">MOTOR DE TRAZA DE FUENTES</div>
-      <div class="text-sm font-semibold mb-2">Cómo se calcula la proyección X</div>
+      <div class="eyebrow mb-2" style="color:var(--gold);">MOTOR DE TRAZA DE FUENTES + VERIFICACIÓN CIUDADANA</div>
+      <div class="text-sm font-semibold mb-2">Proyección X + Segunda Verificación Independiente</div>
       <div class="methodology space-y-2">
         <div><strong>Modelo 60 / 25 / 15</strong></div>
         <div>• <strong>60%</strong> promedio ponderado de encuestas pre-electorales de última semana (Cepeda 38.2–41.4%, Espriella 29.8–33.1%)</div>
         <div>• <strong>25%</strong> delta de sentimiento/volumen X normalizado (heavy research lang:es since:2026-05-31). Westcol stream +2.5h impulsó +4.8 pts Espriella en rural y costa.</div>
         <div>• <strong>15%</strong> señales primarias tempranas: participación diáspora (testigos 92% mesas), densidad de testigos en Antioquia/Valle, madrugar rural reportado.</div>
       </div>
+      <div class="mt-2 text-[11px] text-[var(--dim)]">
+        <strong>Rol de X como segunda verificación:</strong> El volumen y sentimiento en X (en español, geolocalizado, con heavy research) funciona como capa independiente de accountability. Permite contrastar en tiempo real si los números oficiales coinciden con la movilización ciudadana observada en redes. Cualquier divergencia significativa entre conteo oficial y señal X se marca explícitamente como alerta de transparencia.
+      </div>
       <div class="mt-3 pt-3 border-t border-[var(--border)] text-xs text-[var(--ink-2)]">
         Espriella muestra clara sobreperformance rural/caribe vs encuestas. Cepeda sólido en Bogotá y centros urbanos. Alta polarización. 
-        <span class="text-[var(--gold)]">Recomendado: ponderar señales X 2.8× más alto que preconteo temprano.</span>
+        <span class="text-[var(--gold)]">X Sentiment = segunda verificación independiente y crowdsourced (transparencia y accountability). Actúa como contrapeso ciudadano contra manipulación de conteos oficiales o medios.</span>
       </div>
       <button onclick="runTraceProtocol()" class="mt-3 w-full py-2 rounded-xl border border-[var(--border-2)] hover:bg-[var(--surface-2)] text-xs font-mono tracking-widest flex items-center justify-center gap-2">
         <i class="fa-solid fa-shield-halved"></i> <span>EJECUTAR TRAZA COMPLETA (PROTOCOLO 03.1)</span>
