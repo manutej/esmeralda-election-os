@@ -227,6 +227,69 @@
   display: flex; align-items: center; gap: 8px; padding: 4px 0;
   border-bottom: 1px solid rgba(94,222,158,0.08);
 }
+
+/* === Accessible, clear comparison (replaces abstract dumbbell) === */
+.evt .accessible-comparison {
+  font-size: 12px;
+}
+.evt .acc-row {
+  display: grid;
+  grid-template-columns: 78px 1fr 52px 38px;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 0;
+  border-bottom: 1px solid rgba(94,222,158,0.08);
+}
+.evt .acc-row:last-child { border-bottom: none; }
+.evt .acc-label {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.evt .acc-bar-track {
+  height: 9px;
+  background: rgba(127, 160, 140, 0.18);
+  border-radius: 999px;
+  overflow: hidden;
+  position: relative;
+}
+.evt .acc-bar {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 420ms cubic-bezier(0.22,1,0.36,1);
+}
+.evt .acc-delta {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  padding: 1px 5px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+/* === Improved sparklines (clearer momentum encoding) === */
+.evt .spark-container {
+  font-size: 11px;
+}
+.evt .sparkline {
+  width: 78px;
+  height: 32px;
+  display: block;
+}
+.evt .sparkline polyline {
+  fill: none;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.evt .spark-delta {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  padding: 0 4px;
+  border-radius: 3px;
+  min-width: 32px;
+  text-align: right;
+}
 .evt .comparison-row:last-child { border-bottom: none; }
 .evt .comp-label {
   width: 78px; flex-shrink: 0; font-size: 11px; font-weight: 600;
@@ -498,9 +561,9 @@
        Follows Bertin: efficient, monosemic encodings; retinal vars matched to data levels (quant vs nominal);
        max data-ink, minimal text labels, quick perception of standings + geo variance (X vs official sentiment).
   -->
-  <div id="bertin-preview" class="bertin-section card p-4 mb-4">
+  <div id="bertin-preview" class="bertin-section card p-5 mb-4" style="font-size: 1.02em;">
     <div class="bertin-header">
-      <span>BERTIN VISUALS — OFFICIAL vs X (position/size/hue) + RECENCY (value) + MAP (size/orientation)</span>
+      <span>BERTIN VISUALS — clearer comparison + recency trends (larger, ADA-friendly view)</span>
       <button onclick="toggleBertinPanel()" class="text-[10px] px-2 py-0.5 border border-[var(--border)] rounded hover:bg-[var(--surface)]">HIDE PREVIEW</button>
     </div>
 
@@ -509,20 +572,23 @@
       <div class="lg:col-span-3">
         <div class="flex items-baseline justify-between mb-1.5">
           <div class="text-[10px] font-semibold tracking-widest" style="color:var(--ink-2);">OFFICIAL vs X-PROJECTED STANDINGS</div>
-          <div class="bertin-legend">POS = QUANT % • SIZE = MAGNITUDE • HUE = PARTY (nominal)</div>
+          <div class="bertin-legend">Clear bars • X-Proj in party color</div>
         </div>
         <div id="bertin-comparison" class="space-y-px"></div>
-        <div class="bertin-legend mt-1">Small square = official reported (weaker data, value encoding). Circle = X estimate (stronger live signal). Gap line = variance (X momentum overlay).</div>
+        <div class="bertin-legend mt-1">Gray bar = official reported (weaker data). Colored bar = current X projection. Number on right = X-Proj %. Green/Red pill = difference (X minus Official).</div>
       </div>
 
       <!-- 2. Sparklines for recency (15m scheduler heavy pulls). Pure position + value for trend/momentum. -->
       <div class="lg:col-span-2">
         <div class="flex items-baseline justify-between mb-1.5">
           <div class="text-[10px] font-semibold tracking-widest" style="color:var(--ink-2);">RECENCY SPARKLINES (15m pulls)</div>
-          <div class="bertin-legend">VALUE = MOMENTUM • LAST 12 POINTS</div>
+          <div class="bertin-legend">Trend line • Delta badge</div>
         </div>
-        <div id="bertin-sparks" class="grid grid-cols-2 gap-x-3 gap-y-2 text-[10px]"></div>
-        <div class="bertin-legend mt-1">↑ bright = rising X-proj (live sentiment). Updates with simulation.</div>
+        <div id="bertin-sparks" class="grid grid-cols-2 gap-x-4 gap-y-2.5 text-[10px]"></div>
+        <div class="bertin-legend mt-1">
+          Colored dot + label = party. Thin line = recent X-projection trend (last ~12 updates). 
+          Green/Red badge = direction &amp; size of latest change (unambiguous momentum).
+        </div>
       </div>
     </div>
 
@@ -1057,71 +1123,123 @@ function renderVoteBars() {
 function renderBertinComparison() {
   const container = document.getElementById('bertin-comparison');
   if (!container) return;
-  const rows = [...region.results].filter(r => r.party !== 'otros').sort((a,b)=>b.xProj - a.xProj);
-  let html = '';
+
+  const rows = [...region.results]
+    .filter(r => r.party !== 'otros')
+    .sort((a, b) => b.xProj - a.xProj);
+
+  let html = `<div class="accessible-comparison">`;
+
   rows.forEach(r => {
     const p = PARTIES[r.party];
-    const x = Math.max(0, Math.min(100, r.xProj));
-    const o = Math.max(0, Math.min(100, r.official || 0));
+    const x = Math.max(0, Math.min(48, r.xProj));   // cap at realistic max
+    const o = Math.max(0, Math.min(48, r.official || 0));
     const delta = x - o;
-    const deltaW = Math.abs(delta) * 0.68; // visual length of connector
-    const minPos = Math.min(o, x);
-    const col = p.color;
-    // Small official mark (value dim square), large X circle (size + hue)
+    const deltaStr = (delta >= 0 ? '+' : '') + delta.toFixed(1);
+    const deltaColor = delta > 0.15 ? 'var(--good)' : (delta < -0.15 ? 'var(--bad)' : 'var(--dim)');
+    const deltaBg = delta > 0.15 ? 'rgba(52,226,154,0.12)' : (delta < -0.15 ? 'rgba(255,107,94,0.12)' : 'rgba(127,160,140,0.1)');
+
+    const xPct = (x / 50) * 100;
+    const oPct = (o / 50) * 100;
+
     html += `
-      <div class="comparison-row">
-        <div class="comp-label" style="color:${col};">${p.abbr} <span class="text-[9px] opacity-70">${r.cand}</span></div>
-        <div class="comp-scale" title="Position on 0-50% scale (Bertin primary variable)">
-          <div class="comp-axis"></div>
-          <!-- Delta connector line (length/orientation encodes variance) -->
-          <div class="comp-delta-line" style="left:${minPos}%; width:${deltaW}%; background:${delta>0 ? 'var(--good)' : 'var(--bad)'}"></div>
-          <!-- Official: small positioned rect (value encoding for secondary/weaker data) -->
-          <div class="comp-official" style="left:${o}%;"></div>
-          <!-- X-Proj: sized circle positioned (size + hue primary for live estimate) -->
-          <div class="comp-xproj" style="left:${x}%; background:${col}; width:13px; height:13px; margin-top:2.5px;"></div>
+      <div class="acc-row">
+        <div class="acc-label" style="color:${p.color}">
+          ${p.abbr}
+          <span class="text-[10px] opacity-70" style="font-weight:400">${r.cand}</span>
         </div>
-        <div class="comp-pct" style="color:${col};">${r.xProj.toFixed(1)}</div>
+
+        <div class="space-y-1.5">
+          <!-- Official bar (dim, secondary data) -->
+          <div class="flex items-center gap-2">
+            <span class="text-[9px] w-11 text-right" style="color:var(--dim)">Official</span>
+            <div class="acc-bar-track flex-1">
+              <div class="acc-bar" style="width:${oPct}%; background: var(--ink-2);"></div>
+            </div>
+            <span class="font-mono text-[10px] w-9 text-right" style="color:var(--dim)">${o.toFixed(1)}%</span>
+          </div>
+
+          <!-- X-Proj bar (primary live estimate, party color) -->
+          <div class="flex items-center gap-2">
+            <span class="text-[9px] w-11 text-right" style="color:${p.color}">X-Proj</span>
+            <div class="acc-bar-track flex-1">
+              <div class="acc-bar" style="width:${xPct}%; background:${p.color};"></div>
+            </div>
+            <span class="font-mono text-[11px] w-9 text-right font-semibold" style="color:${p.color}">${x.toFixed(1)}%</span>
+          </div>
+        </div>
+
+        <div class="acc-delta" style="color:${deltaColor}; background:${deltaBg}">
+          ${deltaStr}
+        </div>
       </div>`;
   });
+
+  html += `</div>`;
   container.innerHTML = html;
 }
 
 function renderSparklines() {
   const container = document.getElementById('bertin-sparks');
   if (!container) return;
-  const rows = [...region.results].filter(r => r.party !== 'otros').sort((a,b)=>b.xProj - a.xProj);
-  let html = '';
+
+  const rows = [...region.results]
+    .filter(r => r.party !== 'otros')
+    .sort((a, b) => b.xProj - a.xProj);
+
+  let html = `<div class="spark-container">`;
+
   rows.forEach(r => {
     const p = PARTIES[r.party];
     const hist = (region.history && region.history[r.party]) ? region.history[r.party] : [r.xProj];
-    const w = 86, h = 22;
-    // Build polyline points (position for time, y inverted for value)
+    const w = 78, h = 32;
+
+    // Build polyline points
     let pts = '';
     const n = hist.length;
-    const minV = Math.min(...hist, r.xProj - 1), maxV = Math.max(...hist, r.xProj + 1);
+    const minV = Math.min(...hist, r.xProj - 1);
+    const maxV = Math.max(...hist, r.xProj + 1);
     const range = Math.max(1.5, maxV - minV);
+
     hist.forEach((v, i) => {
       const px = (i / (n - 1 || 1)) * w;
-      const py = h - ((v - minV) / range) * (h - 3);
+      const py = h - ((v - minV) / range) * (h - 4);
       pts += `${px.toFixed(1)},${py.toFixed(1)} `;
     });
-    const last = hist[hist.length-1] || r.xProj;
-    const prev = hist[hist.length-2] || last;
-    const up = last >= prev;
-    const stroke = up ? 'var(--good)' : 'var(--bad)';
+
+    const last = hist[hist.length - 1] || r.xProj;
+    const prev = hist[hist.length - 2] || last;
+    const delta = last - prev;
+    const up = delta >= 0;
+
+    // Neutral trend line (consistent, not fighting party color)
+    const trendColor = 'var(--emerald-bright)';
     const dotFill = up ? '#34E29A' : '#FF6B5E';
-    // Spark uses position (time series) + value ramp via stroke for momentum
+
+    // Clear momentum badge (this is what green/red now unambiguously means)
+    const deltaStr = (delta >= 0 ? '+' : '') + delta.toFixed(1);
+    const deltaColor = up ? 'var(--good)' : 'var(--bad)';
+    const deltaBg = up ? 'rgba(52,226,154,0.13)' : 'rgba(255,107,94,0.13)';
+
     html += `
-      <div class="flex items-center gap-1.5">
-        <span style="width:6px;height:6px;border-radius:1px;background:${p.color};flex-shrink:0"></span>
-        <span class="font-medium text-[10px] w-[52px] truncate" style="color:${p.color}">${p.abbr}</span>
+      <div class="flex items-center gap-2 py-0.5">
+        <span style="width:7px;height:7px;border-radius:1px;background:${p.color};flex-shrink:0"></span>
+        <span class="font-medium text-[11px] w-[48px] truncate" style="color:${p.color}">${p.abbr}</span>
+
         <svg class="sparkline" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
-          <polyline points="${pts.trim()}" stroke="${stroke}" opacity="0.95"/>
-          <circle class="spark-dot" cx="${w}" cy="${h - ((last - minV)/range*(h-3))}" r="${up ? 2.2 : 1.8}" fill="${dotFill}"/>
+          <polyline points="${pts.trim()}" stroke="${trendColor}" opacity="0.85"/>
+          <circle cx="${w}" cy="${h - ((last - minV)/range*(h-4))}" r="2.1" fill="${dotFill}"/>
         </svg>
-        <span class="font-mono text-[9px]" style="color:${up?'var(--good)':'var(--bad)'}">${last.toFixed(1)}</span>
+
+        <span class="font-mono text-[11px]" style="color:${p.color}">${last.toFixed(1)}</span>
+
+        <span class="spark-delta" style="color:${deltaColor}; background:${deltaBg}">
+          ${deltaStr}
+        </span>
       </div>`;
   });
+
+  html += `</div>`;
   container.innerHTML = html;
 }
 
