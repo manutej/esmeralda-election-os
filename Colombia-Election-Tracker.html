@@ -310,16 +310,11 @@
     <div class="w-px h-5 bg-[var(--border)]"></div>
 
     <!-- Region pills (exact from screenshot) -->
+    <!-- Colombia-only focus (simplified top bar per current needs) -->
     <div class="flex items-center gap-1.5 text-xs">
-      <button onclick="switchRegion('colombia')" class="region-pill active flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--emerald-bg)] text-[var(--ink)] border border-[var(--emerald)]">
+      <div class="px-3 py-1 rounded-full bg-[var(--emerald-bg)] text-[var(--ink)] border border-[var(--emerald)] flex items-center gap-1.5">
         <span>🇨🇴</span> <span class="font-semibold">COLOMBIA 2026</span>
-      </button>
-      <button onclick="switchRegion('us')" class="region-pill flex items-center gap-1.5 px-3 py-1 rounded-full hover:bg-[var(--surface-2)] text-[var(--dim)] border border-[var(--border)]">
-        <span>🇺🇸</span> <span class="font-medium">LEGISLATIVAS EE.UU. 2026</span>
-      </button>
-      <button onclick="switchRegion('brazil')" class="region-pill flex items-center gap-1.5 px-3 py-1 rounded-full hover:bg-[var(--surface-2)] text-[var(--dim)] border border-[var(--border)]">
-        <span>🇧🇷</span> <span class="font-medium">MUNICIPALES BRASIL</span>
-      </button>
+      </div>
     </div>
 
     <div class="w-px h-5 bg-[var(--border)]"></div>
@@ -452,15 +447,16 @@
     <div class="card p-5 flex flex-col overflow-hidden">
       <div class="flex items-center justify-between mb-2">
         <div class="eyebrow">PULSO GEOGRÁFICO</div>
-        <div class="text-[10px] mono text-[var(--dim)]">8 departamentos destacados · <span id="hex-live-count">3</span> en vivo</div>
+        <div class="text-[10px] mono text-[var(--dim)]">8 depts · <span id="hex-live-count">3</span> en vivo</div>
+      </div>
+      <div class="text-[9px] text-[var(--dim)] mb-1.5 leading-tight">
+        Burbujas = proyección X del voto del partido líder en ese depto. Tamaño = fuerza de la proyección. 
+        Anillo interior = estimación oficial. Flecha/chevron = diferencia (X vs oficial). % = proyección X de voto.
       </div>
 
       <!-- Pulse map (leaf-style visual from screenshot) -->
-      <div class="relative flex-1 bg-[#0B1510] rounded-xl border border-[var(--border)] overflow-hidden" style="min-height:218px;">
+      <div class="relative flex-1 bg-[#0B1510] rounded-xl border border-[var(--border)] overflow-hidden" style="min-height:265px;">
         <svg id="pulse-svg" width="100%" height="100%" viewBox="0 0 520 260" preserveAspectRatio="xMidYMid meet" style="position:absolute;inset:0;"></svg>
-        
-        <!-- City bubbles positioned -->
-        <div id="map-bubbles" class="absolute inset-0"></div>
 
         <!-- Rich hover tooltip (CETI style - improved) -->
         <div id="map-tooltip" 
