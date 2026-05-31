@@ -875,16 +875,83 @@ function renderHexGrid() {
   svg.setAttribute('viewBox', vb);
   svg.innerHTML = content;
 
-  // Simple hover (title + basic console for now; can wire to tooltip later)
+  // Rich hover card using the existing #map-tooltip (name + reporting % + small graphic)
+  const container = svg.parentElement;
+  const tooltip = document.getElementById('map-tooltip');
   const hotspots = svg.querySelectorAll('.hex-hotspot');
+
   hotspots.forEach(g => {
     const id = g.getAttribute('data-dept');
     const d = cells.find(x => x.id === id);
-    if (d) {
-      const freshNote = d.note ? ` | ${d.note.es || d.note}` : '';
-      g.setAttribute('title', `${d.name} · ${PARTIES[d.lead]?.abbr || d.lead} +${d.margin} · ${d.rep}% reporting${freshNote}`);
-    }
+    if (!d) return;
+
+    // Remove old title to avoid double tooltip
+    g.removeAttribute('title');
+
+    g.addEventListener('mouseenter', (ev) => {
+      if (!tooltip) return;
+      showHexTooltip(d, ev, container, tooltip);
+    });
+    g.addEventListener('mouseleave', () => {
+      if (tooltip) hideDeptTooltip(tooltip);
+    });
+    g.addEventListener('mousemove', (ev) => {
+      if (tooltip) positionMapTooltip(ev, container, tooltip);
+    });
   });
+}
+
+function showHexTooltip(d, evt, container, tooltipEl) {
+  const tooltip = tooltipEl || document.getElementById('map-tooltip');
+  if (!tooltip) return;
+
+  const lang = state.lang || 'es';
+  const party = PARTIES[d.lead] || PARTIES.otros;
+  const leadFull = party.full ? party.full[lang] : party.abbr;
+  const rep = d.rep || 0;
+
+  // Title: name
+  const titleEl = document.getElementById('tooltip-title');
+  if (titleEl) {
+    titleEl.innerHTML = `${d.name || d.abbr} <span style="font-weight:400;opacity:0.6;font-size:10px">· ${d.city || ''}</span>`;
+  }
+
+  // Lead + margin
+  const leadEl = document.getElementById('tooltip-lead');
+  if (leadEl) {
+    leadEl.innerHTML = `
+      <span style="width:9px;height:9px;border-radius:2px;background:${party.color};display:inline-block;flex-shrink:0;margin-right:5px;box-shadow:0 0 0 1px rgba(255,255,255,0.2)"></span>
+      <span style="color:${party.color};font-weight:700;letter-spacing:-0.1px">${leadFull}</span>
+      <span style="margin-left:auto;font-family:var(--f-mono);font-size:10px;opacity:0.85">+${(d.margin||0).toFixed(1)}</span>
+    `;
+  }
+
+  // Stats: X-Proj + Reporting % with small graphic
+  const statsEl = document.getElementById('tooltip-stats');
+  if (statsEl) {
+    const xproj = (d.xProj || 0).toFixed(1);
+    const v = d.variance || 0;
+    const vColor = v >= 0 ? 'var(--good)' : 'var(--bad)';
+    statsEl.innerHTML = `
+      X-Proj: <span style="color:${party.color};font-weight:700">${xproj}%</span>
+      <span style="opacity:0.4;margin:0 4px">·</span>
+      Reporting: ${rep}%
+      <div style="margin-top:4px;height:4px;background:rgba(127,160,140,0.2);border-radius:999px;overflow:hidden">
+        <div style="height:4px;width:${rep}%;background:${party.color};border-radius:999px"></div>
+      </div>
+    `;
+  }
+
+  // Note (heavy signal or other)
+  const noteEl = document.getElementById('tooltip-note');
+  if (noteEl) {
+    const noteText = d.note ? (typeof d.note === 'string' ? d.note : (d.note[lang] || '')) : '';
+    noteEl.textContent = noteText || 'Hex tile · datos combinados oficial + X';
+  }
+
+  tooltip.style.display = 'block';
+  tooltip.classList.remove('hidden');
+  positionMapTooltip(evt, container, tooltip);
 }
 
 let region = {
