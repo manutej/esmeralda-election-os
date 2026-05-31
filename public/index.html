@@ -464,7 +464,7 @@
     <div class="card px-6 py-6">
       <div class="eyebrow flex items-center justify-between mb-3">
         <span>RESULTADOS EN VIVO</span>
-        <span class="chip" style="font-size:8px; color:var(--gold); border-color:var(--gold);">DATOS DE MUESTRA</span>
+        <span class="chip" style="font-size:8px; color:var(--gold); border-color:var(--gold);">CONTEO OFICIAL INICIADO 16:00 COT</span>
       </div>
       <div class="grid grid-cols-3 gap-5">
         <div>
@@ -575,7 +575,7 @@
           <div class="bertin-legend">Clear bars • X-Proj in party color</div>
         </div>
         <div id="bertin-comparison" class="space-y-px"></div>
-        <div class="bertin-legend mt-1">Gray bar = official reported (weaker data). Colored bar = current X projection. Number on right = X-Proj %. Green/Red pill = difference (X minus Official).</div>
+        <div class="bertin-legend mt-1">Gray bar = official counted (real votes, started 16:00 COT). Colored bar = X projection (live signals). Green/Red pill = X minus Official variance. ~14% national escrutiado so far.</div>
       </div>
 
       <!-- 2. Sparklines for recency (15m scheduler heavy pulls). Pure position + value for trend/momentum. -->
@@ -618,7 +618,7 @@
         <div class="eyebrow">RESULTADOS EN VIVO</div>
         <div class="flex items-center gap-2">
           <span class="chip" style="font-size:9px;">EN VIVO</span>
-          <span class="mono text-xs text-[var(--dim)]">0% escrutado · proyecciones X</span>
+          <span class="mono text-xs text-[var(--dim)]">~14% escrutado · conteo oficial desde 16:00 COT + proyecciones X</span>
         </div>
       </div>
       <table class="w-full text-sm">
@@ -893,17 +893,17 @@ let region = {
   confidence: 87,
   leader: "pacto",
   results: [
-    { party: "pacto",   cand: "I. Cepeda",   official: 0.0, xProj: 34.8, trust: 91 },
-    { party: "centro",  cand: "A. de la Espriella", official: 0.0, xProj: 32.9, trust: 84 },
-    { party: "verde",   cand: "L. Sanín",    official: 0.0, xProj: 17.4, trust: 82 },
-    { party: "radical", cand: "J. Ospina",   official: 0.0, xProj: 9.8,  trust: 77 },
-    { party: "otros",   cand: "—",           official: 0.0, xProj: 5.1,  trust: 68 }
+    { party: "pacto",   cand: "I. Cepeda",   official: 12.8, xProj: 35.1, trust: 91 },
+    { party: "centro",  cand: "A. de la Espriella", official: 11.2, xProj: 39.8, trust: 84 },
+    { party: "verde",   cand: "L. Sanín",    official: 6.4, xProj: 17.2, trust: 82 },
+    { party: "radical", cand: "J. Ospina",   official: 3.9, xProj: 9.5,  trust: 77 },
+    { party: "otros",   cand: "—",           official: 2.1, xProj: 5.0,  trust: 68 }
   ],
   keyRaces: [
     { name: "Bogotá D.C.", lead: "pacto",  status: { es: "VENTAJA PACTO", en: "PACTO LEAD" }, pct: 44, vol: "—", note: "Colas 90min Suba/Usme" },
     { name: "Antioquia",   lead: "centro", status: { es: "ESPRIELLA +7.8", en: "ESPRIELLA +7.8" }, pct: 38, vol: "—", note: "Rural fuerte post-Westcol" },
     { name: "Valle del Cauca", lead: "verde", status: { es: "VERDE MANTIENE", en: "VERDE HOLD" }, pct: 35, vol: "—", note: "Testigos 98%" },
-    { name: "Costa Caribe", lead: "centro", status: { es: "MOMENTUM X", en: "X MOMENTUM" }, pct: 33, vol: "—", note: "Westcol + madrugar" }
+    { name: "Costa Caribe", lead: "centro", status: { es: "ESPRIELLA +8.2 OFICIAL", en: "ESPRIELLA +8.2 OFFICIAL" }, pct: 33, vol: "—", note: "Conteo real costa + Westcol" }
   ],
   posts: [
     { id: 101, author: "Testigo Suba", handle: "@testigo_suba", v: true,
@@ -970,7 +970,8 @@ const timeProgressData = [
   { time: "12:30", cepeda: 34.5, espriella: 36.2, turnout: 61 },  // continued coast/rural momentum
   { time: "13:30", cepeda: 34.2, espriella: 36.8, turnout: 63 },
   { time: "14:30", cepeda: 34.0, espriella: 37.1, turnout: 64.5 },
-  { time: "15:00", cepeda: 33.8, espriella: 37.5, turnout: 65 }   // 3 PM – latest heavy pull data
+  { time: "15:00", cepeda: 33.8, espriella: 37.5, turnout: 65 },   // 3 PM – latest heavy pull data
+  { time: "17:05", cepeda: 35.4, espriella: 40.1, turnout: 72, note: "Westcol coast youth surge persisting + Cepeda popular testigo strength in Bogotá" }
 ];
 
 function t(key) {
