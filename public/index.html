@@ -256,11 +256,11 @@
         </div>
       </div>
       <div class="display text-4xl tracking-[-1.5px] text-[var(--ink)]">Primera vuelta presidencial — Colombia</div>
-      <div class="text-[var(--dim)] mt-0.5">Polls opened at 08:00 COT • <span id="voting-minutes" class="font-mono text-[var(--emerald)] font-bold">148</span> min of voting • Mid-morning turnout signals strengthening</div>
+      <div class="text-[var(--dim)] mt-0.5">Polls opened at 08:00 COT • <span id="voting-minutes" class="font-mono text-[var(--emerald)] font-bold">185</span> min of voting • Late-morning turnout solid across key departments</div>
     </div>
     <div class="text-right">
       <div class="chip" style="color:var(--gold); border-color:var(--gold); font-size:9px;">MUESTRA PESADA X + 1.284 POSTS</div>
-      <div class="text-[10px] text-[var(--dim)] mt-1">Heavy seed · actualizado <span id="seed-time">10:28</span> COT</div>
+      <div class="text-[10px] text-[var(--dim)] mt-1">Heavy seed · actualizado <span id="seed-time">11:05</span> COT</div>
     </div>
   </div>
 
@@ -390,7 +390,7 @@
         <span class="chip" style="font-size:8.5px;">X · ⟳ 1.284 posts</span>
       </div>
       <div id="x-feed" class="flex-1 min-h-0 overflow-y-auto space-y-2.5 pr-1 text-[13px]" style="scrollbar-width:thin;"></div>
-      <div class="text-[10px] text-center text-[var(--dim)] mt-2 font-mono">Actualizado con heavy research · <span id="feed-time">10:28</span> COT</div>
+      <div class="text-[10px] text-center text-[var(--dim)] mt-2 font-mono">Actualizado con heavy research · <span id="feed-time">11:05</span> COT</div>
     </div>
   </div>
 
@@ -419,7 +419,7 @@
         </thead>
         <tbody id="results-table" class="text-[14px]"></tbody>
       </table>
-      <div class="text-[10px] text-[var(--dim)] mt-3 font-mono">Varianza calculada desde 1.284 posts X + 89 clips de testigos (heavy seed 10:28 COT)</div>
+      <div class="text-[10px] text-[var(--dim)] mt-3 font-mono">Varianza calculada desde 1.284 posts X + 89 clips de testigos (heavy seed 11:05 COT)</div>
     </div>
 
     <!-- Source-Trace / Reasoning -->
@@ -444,7 +444,7 @@
   </div>
 
   <div class="text-center mt-6 text-[10px] text-[var(--dim)] font-mono">
-    Esmeralda Election OS — prototipo ciudadano de alta fidelidad · CETI tokens · datos heavy seed 31 may 2026 10:28 COT · 
+    Esmeralda Election OS — prototipo ciudadano de alta fidelidad · CETI tokens · datos heavy seed 31 may 2026 11:05 COT · 
     <a href="#" onclick="showSourceWiki()" class="underline hover:text-[var(--emerald)]">ver linaje completo (wiki Karpathy)</a>
   </div>
 </div>
@@ -503,7 +503,7 @@ const I18N = {
   }
 };
 
-// Heavy-seed updated data (10:28 COT, mid-morning ~2.5h into voting)
+// Heavy-seed updated data (11:05 COT, late morning ~3h+ into voting)
 // Mapped to design parties for visual fidelity
 const PARTIES = {
   pacto:   { abbr: "Pacto", full: { es: "Pacto Histórico", en: "Pacto Histórico" }, side: { es: "Coalición de izquierda", en: "Left coalition" }, color: "var(--p-pacto)" },
@@ -590,7 +590,7 @@ function updateLiveBadge() {
 }
 
 // Live COT clock (simulated election day ~09:02 onward)
-let cotBaseMinutes = 10 * 60 + 28; // 10:28 COT - mid-morning, polls open ~2.5 hours
+let cotBaseMinutes = 11 * 60 + 5; // 11:05 COT - late morning, polls open ~3+ hours
 
 function updateLiveCOTClock() {
   const timeEl = document.getElementById('live-cot-time');
