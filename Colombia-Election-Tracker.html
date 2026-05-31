@@ -193,6 +193,106 @@
 .evt .methodology {
   font-size: 12px; line-height: 1.5; color: var(--ink-2);
 }
+
+/* ============================================
+   BERTIN SEMIOLOGY ENHANCEMENTS (preview mode)
+   Per Semiology of Graphics:
+   - Position (planar): primary for quantitative comparison (diagrams)
+   - Size: quantitative magnitude (esp. on maps for symbols)
+   - Color hue: nominal categories (parties)
+   - Value (lightness): ordered/sequence (momentum, recency)
+   - Orientation + texture cues: for variance/sentiment overlays (X vs official)
+   Data-ink max, text min, efficient perception of standings + geography.
+   All live-updating from 15m heavy scheduler sim.
+   ============================================ */
+.evt .bertin-section {
+  border: 1px solid var(--border-2);
+  background: var(--surface-2);
+  border-radius: 12px;
+}
+.evt .bertin-header {
+  font-family: var(--f-mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.evt .bertin-legend {
+  font-size: 9px; color: var(--dim); font-family: var(--f-mono);
+}
+.evt .comparison-row {
+  display: flex; align-items: center; gap: 8px; padding: 4px 0;
+  border-bottom: 1px solid rgba(94,222,158,0.08);
+}
+.evt .comparison-row:last-child { border-bottom: none; }
+.evt .comp-label {
+  width: 78px; flex-shrink: 0; font-size: 11px; font-weight: 600;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.evt .comp-scale {
+  position: relative; flex: 1; height: 22px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 3px; overflow: hidden;
+}
+.evt .comp-axis {
+  position: absolute; left: 0; right: 0; top: 50%; height: 1px;
+  background: var(--grid-line); transform: translateY(-50%);
+}
+.evt .comp-official {
+  position: absolute; top: 3px; bottom: 3px; width: 3px;
+  background: var(--ink-2); border-radius: 1px; box-shadow: 0 0 0 1px var(--surface);
+  /* Value encoding for weaker official data */
+  opacity: 0.75;
+}
+.evt .comp-xproj {
+  position: absolute; top: 2px; bottom: 2px;
+  width: 11px; height: 11px; margin-top: 3.5px; border-radius: 50%;
+  border: 1.5px solid #fff; box-shadow: 0 0 0 1px rgba(0,0,0,0.3);
+  /* Size + hue for X estimate magnitude + category */
+  transform: translateX(-50%);
+  transition: left 420ms cubic-bezier(0.22,1,0.36,1), background 280ms;
+}
+.evt .comp-delta-line {
+  position: absolute; top: 50%; height: 1.5px; background: var(--dim);
+  opacity: 0.55; transform: translateY(-50%);
+  /* Orientation/length encodes X vs official delta (variance) */
+  transition: left 420ms, width 420ms;
+}
+.evt .comp-pct {
+  font-family: var(--f-mono); font-size: 9px; width: 28px; text-align: right; color: var(--dim);
+}
+
+/* Sparklines: recency from scheduler pulls. Value (lightness ramp) for momentum */
+.evt .sparkline {
+  width: 92px; height: 26px; display: block;
+}
+.evt .sparkline path {
+  fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round;
+  transition: stroke 200ms;
+}
+.evt .sparkline .spark-dot {
+  transition: all 200ms;
+}
+
+/* Map enhancements: proportional symbols (size for magnitude per Bertin maps) */
+.evt .dept-hotspot .variance-orient {
+  stroke: var(--ink); stroke-width: 1.4; stroke-linecap: round;
+  /* Orientation retinal var for + / - variance (X vs official sentiment overlay) */
+}
+.evt .dept-hotspot .official-inner {
+  /* Small inner mark using value for official baseline */
+  fill: none; stroke: var(--ink-2); stroke-width: 1.2; opacity: 0.6;
+}
+
+/* Live momentum glyph (size + value) */
+.evt .momentum-glyph {
+  display: inline-block; width: 9px; height: 9px; border-radius: 50%;
+  vertical-align: -1px; margin-left: 4px;
+  box-shadow: 0 0 0 1px var(--surface);
+  transition: transform 280ms, background 280ms;
+}
 </style>
 </head>
 <body class="evt" data-theme="dark" lang="es">
@@ -240,6 +340,8 @@
         <span style="opacity:0.45;">·</span>
         <span id="live-updated" style="color:var(--dim); font-weight:500;">actualizado 0s atrás</span>
       </div>
+      <!-- BERTIN PREVIEW INDICATOR (local only; remove for prod) -->
+      <span onclick="document.getElementById('bertin-preview').scrollIntoView({behavior:'smooth'})" class="chip text-[9px] cursor-pointer" style="border-color:var(--gold);color:var(--gold);" title="Scroll to Bertin-enhanced diagrams (position/size/value/orientation per Semiology of Graphics)">BERTIN PREVIEW</span>
     </div>
   </div>
 </div>
@@ -394,16 +496,47 @@
     </div>
   </div>
 
-  <!-- PREVIEW: Bertin-enhanced visuals (per Semiology of Graphics: use position/size for quantities, color hue for categories, value/texture for official vs X distinction. Avoid text dominance; direct retinal encoding for standings, sentiment overlays, live updates) -->
-  <div id="bertin-preview" class="card p-5 mb-4" style="display: none;">
-    <div class="eyebrow mb-2" style="color: var(--gold);">PREVIEW · BERTIN SEMIOLOGY OF GRAPHICS</div>
-    <div class="text-sm mb-3">Clearer diagrams for Official vs X-Projected (position + size for magnitude per Bertin Ch. on diagrams). Sentiment overlays and live candidate standings using retinal variables.</div>
-    <div id="bertin-graphs" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <!-- Subagent will populate: paired comparison diagrams, geographic encodings, etc. -->
-      <div class="p-3 border border-[var(--border)] rounded">Official vs X Projection (Bertin diagram placeholder)</div>
-      <div class="p-3 border border-[var(--border)] rounded">Live Sentiment Overlay + Geo Pulse (enhanced map)</div>
+  <!-- BERTIN ENHANCEMENT START: Visible preview panel for local testing.
+       Rollback: change "block" to "none" or delete entire block + supporting JS/CSS (search for BERTIN).
+       Integrates: paired comparison (position primary + size secondary + hue per diagrams chapter),
+       sparklines (value/lightness for recency/momentum from 15m pulls), map upgrades wired below.
+       Follows Bertin: efficient, monosemic encodings; retinal vars matched to data levels (quant vs nominal);
+       max data-ink, minimal text labels, quick perception of standings + geo variance (X vs official sentiment).
+  -->
+  <div id="bertin-preview" class="bertin-section card p-4 mb-4">
+    <div class="bertin-header">
+      <span>BERTIN VISUALS — OFFICIAL vs X (position/size/hue) + RECENCY (value) + MAP (size/orientation)</span>
+      <button onclick="toggleBertinPanel()" class="text-[10px] px-2 py-0.5 border border-[var(--border)] rounded hover:bg-[var(--surface)]">HIDE PREVIEW</button>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-x-5 gap-y-4 mt-3">
+      <!-- 1. Official vs X-Projected: Dumbbell / dual dot plot (Bertin diagram: planar position for precise comparison of two conditions; size differentiates official (small, value) vs X-proj (larger, hue); connecting line orients delta visually. Small multiples stacked for candidates. -->
+      <div class="lg:col-span-3">
+        <div class="flex items-baseline justify-between mb-1.5">
+          <div class="text-[10px] font-semibold tracking-widest" style="color:var(--ink-2);">OFFICIAL vs X-PROJECTED STANDINGS</div>
+          <div class="bertin-legend">POS = QUANT % • SIZE = MAGNITUDE • HUE = PARTY (nominal)</div>
+        </div>
+        <div id="bertin-comparison" class="space-y-px"></div>
+        <div class="bertin-legend mt-1">Small square = official reported (weaker data, value encoding). Circle = X estimate (stronger live signal). Gap line = variance (X momentum overlay).</div>
+      </div>
+
+      <!-- 2. Sparklines for recency (15m scheduler heavy pulls). Pure position + value for trend/momentum. -->
+      <div class="lg:col-span-2">
+        <div class="flex items-baseline justify-between mb-1.5">
+          <div class="text-[10px] font-semibold tracking-widest" style="color:var(--ink-2);">RECENCY SPARKLINES (15m pulls)</div>
+          <div class="bertin-legend">VALUE = MOMENTUM • LAST 12 POINTS</div>
+        </div>
+        <div id="bertin-sparks" class="grid grid-cols-2 gap-x-3 gap-y-2 text-[10px]"></div>
+        <div class="bertin-legend mt-1">↑ bright = rising X-proj (live sentiment). Updates with simulation.</div>
+      </div>
+    </div>
+
+    <!-- Map encoding note (actual map upgraded in renderPulseMap) -->
+    <div class="mt-3 pt-2 border-t border-[var(--border)] text-[9px] text-[var(--dim)] font-mono flex flex-wrap gap-x-4 gap-y-0.5">
+      <span>MAP (Bertin): <strong>SIZE</strong> ∝ xProj magnitude (prop. symbols at dept centroids); <strong>HUE</strong> = lead party; <strong>ORIENTATION</strong> chevron = variance sign (X vs official overlay); inner ring = baseline. Hover for details.</span>
     </div>
   </div>
+  <!-- BERTIN ENHANCEMENT END -->
 
 <!-- BOTTOM: RESULTS TABLE + REASONING -->
   <div class="grid grid-cols-[1.62fr,1fr] gap-4">
@@ -591,6 +724,27 @@ const POST_POOL = [
   { author: "MOE Observador", handle: "@moe_observador", v: true, es: "A las 11:30 cobertura testigos 98.3% nacional (récord). Pocas incidencias. Ciudadanos subiendo fotos de actas (#TestigoDigital) para auditoría paralela.", en: "At 11:30 witness coverage 98.3% national (record). Few incidents. Citizens uploading acta photos (#TestigoDigital) for parallel audit." }
 ];
 
+// BERTIN DATA EXTENSION (for preview panel + live recency)
+// History ring buffer per candidate — simulates 15m heavy scheduler pulls (last ~12 points)
+region.history = {};
+function seedBertinHistory() {
+  region.results.forEach(r => {
+    const base = r.xProj;
+    const hist = [];
+    for (let i = 11; i >= 0; i--) {
+      // Gentle recent trend + noise, centered on current
+      const trend = (i - 6) * -0.18; // slight upward recent bias for demo momentum
+      hist.push(Math.max(2, Math.min(48, base + trend + (Math.random() - 0.5) * 1.4)));
+    }
+    region.history[r.party] = hist;
+  });
+}
+function pushHistory(party, newVal) {
+  if (!region.history[party]) region.history[party] = [];
+  region.history[party].push(newVal);
+  if (region.history[party].length > 12) region.history[party].shift();
+}
+
 function t(key) {
   return I18N[state.lang][key] || key;
 }
@@ -709,6 +863,8 @@ function renderVoteBars() {
   const rows = [...region.results].sort((a,b) => b.xProj - a.xProj);
   container.innerHTML = rows.map(r => {
     const p = PARTIES[r.party];
+    // BERTIN: dual retinal on existing bars — position for X (main bar), small value-coded marker for official at exact position (even if 0)
+    const offLeft = Math.max(0, Math.min(100, r.official));
     return `
       <div>
         <div class="flex justify-between items-baseline text-sm mb-1">
@@ -719,11 +875,94 @@ function renderVoteBars() {
           </div>
           <span class="font-mono font-bold text-[15px]">${r.xProj.toFixed(1)}%</span>
         </div>
-        <div class="bar-track h-2">
+        <div class="bar-track h-2 relative">
           <div class="bar-fill" style="width:${r.xProj}%; background:${p.color}; box-shadow:var(--glow);"></div>
+          <!-- Official marker: position encoding + value (dim) for distinction from X-proj bar -->
+          <div class="absolute top-[-1px] bottom-[-1px] w-[2px] bg-[var(--ink-2)]" style="left:${offLeft}%; opacity:0.65; box-shadow:0 0 0 1px var(--surface);"></div>
         </div>
       </div>`;
   }).join('');
+}
+
+// BERTIN RENDER FUNCTIONS — concrete, self-contained, live-updatable
+// All use high data-ink, retinal-variable driven encodings. No heavy text.
+
+function renderBertinComparison() {
+  const container = document.getElementById('bertin-comparison');
+  if (!container) return;
+  const rows = [...region.results].filter(r => r.party !== 'otros').sort((a,b)=>b.xProj - a.xProj);
+  let html = '';
+  rows.forEach(r => {
+    const p = PARTIES[r.party];
+    const x = Math.max(0, Math.min(100, r.xProj));
+    const o = Math.max(0, Math.min(100, r.official || 0));
+    const delta = x - o;
+    const deltaW = Math.abs(delta) * 0.68; // visual length of connector
+    const minPos = Math.min(o, x);
+    const col = p.color;
+    // Small official mark (value dim square), large X circle (size + hue)
+    html += `
+      <div class="comparison-row">
+        <div class="comp-label" style="color:${col};">${p.abbr} <span class="text-[9px] opacity-70">${r.cand}</span></div>
+        <div class="comp-scale" title="Position on 0-50% scale (Bertin primary variable)">
+          <div class="comp-axis"></div>
+          <!-- Delta connector line (length/orientation encodes variance) -->
+          <div class="comp-delta-line" style="left:${minPos}%; width:${deltaW}%; background:${delta>0 ? 'var(--good)' : 'var(--bad)'}"></div>
+          <!-- Official: small positioned rect (value encoding for secondary/weaker data) -->
+          <div class="comp-official" style="left:${o}%;"></div>
+          <!-- X-Proj: sized circle positioned (size + hue primary for live estimate) -->
+          <div class="comp-xproj" style="left:${x}%; background:${col}; width:13px; height:13px; margin-top:2.5px;"></div>
+        </div>
+        <div class="comp-pct" style="color:${col};">${r.xProj.toFixed(1)}</div>
+      </div>`;
+  });
+  container.innerHTML = html;
+}
+
+function renderSparklines() {
+  const container = document.getElementById('bertin-sparks');
+  if (!container) return;
+  const rows = [...region.results].filter(r => r.party !== 'otros').sort((a,b)=>b.xProj - a.xProj);
+  let html = '';
+  rows.forEach(r => {
+    const p = PARTIES[r.party];
+    const hist = (region.history && region.history[r.party]) ? region.history[r.party] : [r.xProj];
+    const w = 86, h = 22;
+    // Build polyline points (position for time, y inverted for value)
+    let pts = '';
+    const n = hist.length;
+    const minV = Math.min(...hist, r.xProj - 1), maxV = Math.max(...hist, r.xProj + 1);
+    const range = Math.max(1.5, maxV - minV);
+    hist.forEach((v, i) => {
+      const px = (i / (n - 1 || 1)) * w;
+      const py = h - ((v - minV) / range) * (h - 3);
+      pts += `${px.toFixed(1)},${py.toFixed(1)} `;
+    });
+    const last = hist[hist.length-1] || r.xProj;
+    const prev = hist[hist.length-2] || last;
+    const up = last >= prev;
+    const stroke = up ? 'var(--good)' : 'var(--bad)';
+    const dotFill = up ? '#34E29A' : '#FF6B5E';
+    // Spark uses position (time series) + value ramp via stroke for momentum
+    html += `
+      <div class="flex items-center gap-1.5">
+        <span style="width:6px;height:6px;border-radius:1px;background:${p.color};flex-shrink:0"></span>
+        <span class="font-medium text-[10px] w-[52px] truncate" style="color:${p.color}">${p.abbr}</span>
+        <svg class="sparkline" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
+          <polyline points="${pts.trim()}" stroke="${stroke}" opacity="0.95"/>
+          <circle class="spark-dot" cx="${w}" cy="${h - ((last - minV)/range*(h-3))}" r="${up ? 2.2 : 1.8}" fill="${dotFill}"/>
+        </svg>
+        <span class="font-mono text-[9px]" style="color:${up?'var(--good)':'var(--bad)'}">${last.toFixed(1)}</span>
+      </div>`;
+  });
+  container.innerHTML = html;
+}
+
+function toggleBertinPanel() {
+  const el = document.getElementById('bertin-preview');
+  if (!el) return;
+  const hidden = el.style.display === 'none';
+  el.style.display = hidden ? 'block' : 'none';
 }
 
 // Render X Feed (fully bilingual, clean)
@@ -866,20 +1105,30 @@ function renderPulseMap() {
   `;
 
   // Interactive department hotspots (pure SVG groups)
+  // BERTIN MAP ENHANCEMENT: size (proportional symbols) for xProj magnitude at fixed geo position;
+  // orientation (chevron) for variance sign = X vs official sentiment overlay; value stroke for baseline.
   depts.forEach((d) => {
     const party = PARTIES[d.lead] || PARTIES.otros;
     const col = party.color;
     const op = Math.max(0.58, Math.min(0.96, 0.52 + Math.abs(d.margin || 4) / 17));
-    const r = d.r || 14;
+    // Proportional symbol size per Bertin (strongest retinal for quantity on maps after position)
+    const baseR = d.r || 14;
+    const dynR = Math.max(8, Math.min(22, 7.5 + Math.sqrt(Math.max(4, d.xProj || 30)) * 1.85));
+    const r = dynR; // use for all dependent geometry
     const isLive = !!d.live;
     const x = d.x, y = d.y;
+    const v = d.variance || 0;
+    const orientRot = v >= 0 ? 28 : -28; // orientation retinal variable for + / - variance (X momentum)
+    const orientLen = 5.5;
+    // Simulated official baseline size (smaller concentric for comparison overlay)
+    const offR = Math.max(3.5, Math.min(r * 0.55, (d.rep || 60) / 140 * r * 0.7));
 
     content += `
       <g class="dept-hotspot" data-dept="${d.id}" data-lead="${d.lead}">
         <!-- Territory highlight (soft region blob for visual density + key region emphasis) -->
         <ellipse cx="${x}" cy="${y}" rx="${r * 1.55}" ry="${r * 1.32}" fill="${col}" opacity="0.13" filter="url(#softTerritory)"/>
 
-        <!-- Main colored pulse disc -->
+        <!-- Main colored pulse disc (size now encodes xProj magnitude) -->
         <circle cx="${x}" cy="${y}" r="${r}" fill="${col}" opacity="${op}" filter="url(#pulseGlow)"/>
         
         <!-- Live pulsing ring (only for live depts) -->
@@ -888,6 +1137,15 @@ function renderPulseMap() {
           <animate attributeName="r" values="${r+3.5};${r+10.5};${r+3.5}" dur="2.1s" repeatCount="indefinite"/>
           <animate attributeName="opacity" values="0.65;0.12;0.65" dur="2.1s" repeatCount="indefinite"/>
         </circle>` : ''}
+
+        <!-- BERTIN: Inner official baseline ring (value + smaller size for official vs X distinction) -->
+        <circle cx="${x}" cy="${y}" r="${offR}" class="official-inner" />
+
+        <!-- BERTIN: Variance orientation chevron/line (orientation retinal var for sentiment/X-vs-official overlay) -->
+        <g transform="translate(${x},${y}) rotate(${orientRot})">
+          <line x1="${-orientLen}" y1="0" x2="${orientLen}" y2="0" class="variance-orient" />
+          <polyline points="${-orientLen},0 ${-orientLen*0.3},${v>=0 ? -1.8 : 1.8} ${orientLen*0.3},${v>=0 ? -1.8 : 1.8} ${orientLen},0" fill="none" class="variance-orient" />
+        </g>
 
         <!-- Inner light ring for executive polish -->
         <circle cx="${x}" cy="${y}" r="${r * 0.68}" fill="none" stroke="rgba(255,255,255,0.75)" stroke-width="1.35"/>
@@ -1070,6 +1328,9 @@ function renderAll() {
   renderResultsTable();
   renderPulseMap();
   renderHexMap();
+  // BERTIN live visuals
+  renderBertinComparison();
+  renderSparklines();
   updateLiveBadge();
   updateLiveCOTClock();
 }
@@ -1082,6 +1343,8 @@ function startLiveSimulation() {
       if (r.party === 'otros') return;
       const delta = (Math.random() - 0.47) * 0.22;
       r.xProj = Math.max(3, Math.min(48, r.xProj + delta));
+      // BERTIN recency: push to history ring for sparklines (simulates 15m scheduler data arrival)
+      pushHistory(r.party, r.xProj);
     });
     // Normalize
     let tot = 0;
@@ -1186,6 +1449,9 @@ function boot() {
   // Seed feed
   state.feed = [...region.posts];
 
+  // BERTIN: seed history for sparklines (recency from simulated heavy 15m pulls)
+  if (typeof seedBertinHistory === 'function') seedBertinHistory();
+
   // Initial renders
   renderAll();
 
@@ -1201,7 +1467,7 @@ function boot() {
   });
 
   // Expose for console debugging + external control
-  window.ESMERALDA = { state, region, coDepts: window.coDepts, switchLang, setTheme, renderPulseMap };
+  window.ESMERALDA = { state, region, coDepts: window.coDepts, switchLang, setTheme, renderPulseMap, renderBertinComparison, renderSparklines, seedBertinHistory };
   
   console.log('%c[Esmeralda] Colombia Election Tracker 2026 — Control Room faithful build. Heavy X data wired. Bilingual clean toggle active.', 'color:#34E29A');
 }
