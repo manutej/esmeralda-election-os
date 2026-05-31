@@ -513,6 +513,21 @@ const PARTIES = {
   otros:   { abbr: "Otros", full: { es: "Otros / en blanco", en: "Others / blank" }, side: { es: "—", en: "—" }, color: "var(--p-otros)" }
 };
 
+// coDepts — 9 priority departments for PULSO GEOGRÁFICO (coHex/coDepts style)
+// id, bilingual name, lead party key, xProj (local leader %), margin (lead pts), rep (reporting %), variance, live flag, signal note
+const coDepts = [
+  { id: "atlantico", name: { es: "Atlántico", en: "Atlántico" }, city: "Barranquilla", x: 148, y: 66, r: 18, lead: "centro", xProj: 41.2, margin: 7.4, rep: 71, variance: +2.8, live: true, note: { es: "Efecto Westcol fuerte · Participación joven y rural alta", en: "Westcol effect strong · High youth & rural turnout" } },
+  { id: "antioquia", name: { es: "Antioquia", en: "Antioquia" }, city: "Medellín", x: 192, y: 115, r: 17, lead: "centro", xProj: 38.4, margin: 6.8, rep: 64, variance: +4.9, live: true, note: { es: "Movilización rural post-Westcol · Densidad testigos 2.3×", en: "Rural mobilization post-Westcol · 2.3× witness density" } },
+  { id: "santander", name: { es: "Santander", en: "Santander" }, city: "Bucaramanga", x: 258, y: 94, r: 14, lead: "centro", xProj: 36.1, margin: 3.2, rep: 53, variance: +1.7, live: false, note: { es: "Derecha consolidada · Espriella robando voto anti-sistema", en: "Right consolidated · Espriella stealing anti-system vote" } },
+  { id: "cundi", name: { es: "Cundinamarca / Bogotá", en: "Cundinamarca / Bogotá" }, city: "Bogotá D.C.", x: 232, y: 158, r: 19, lead: "pacto", xProj: 44.0, margin: 9.1, rep: 71, variance: +3.1, live: true, note: { es: "Alta participación juvenil · Bases populares Suba/Usme sólidas", en: "High youth turnout · Strong popular base in Suba/Usme" } },
+  { id: "valle", name: { es: "Valle del Cauca", en: "Valle del Cauca" }, city: "Cali", x: 148, y: 198, r: 15, lead: "verde", xProj: 35.3, margin: 4.2, rep: 58, variance: +0.9, live: false, note: { es: "Testigos densos 98% · Verde mantiene Cali metro", en: "98% witness density · Verde holding Cali metro" } },
+  { id: "meta", name: { es: "Meta", en: "Meta" }, city: "Villavicencio", x: 292, y: 178, r: 13, lead: "radical", xProj: 33.0, margin: 2.8, rep: 49, variance: -0.4, live: false, note: { es: "Llanos con señal radical estable", en: "Llanos stable Radical signal" } },
+  { id: "narino", name: { es: "Nariño", en: "Nariño" }, city: "Pasto", x: 132, y: 236, r: 12, lead: "pacto", xProj: 47.1, margin: 11.4, rep: 66, variance: +3.8, live: false, note: { es: "Participación rural +11 pts vs 2022 · Testigos completos", en: "Rural turnout +11pts vs 2022 · Full witness coverage" } },
+  { id: "bolivar", name: { es: "Bolívar", en: "Bolívar" }, city: "Cartagena", x: 115, y: 92, r: 11, lead: "pacto", xProj: 39.8, margin: 5.6, rep: 61, variance: +2.3, live: false, note: { es: "Costa con impulso Pacto · Colas ordenadas", en: "Coast with Pacto momentum · Orderly queues" } },
+  { id: "cauca", name: { es: "Cauca", en: "Cauca" }, city: "Popayán", x: 142, y: 222, r: 10, lead: "pacto", xProj: 42.6, margin: 7.9, rep: 44, variance: +1.4, live: false, note: { es: "Señal Pacto fuerte en zonas rurales", en: "Strong Pacto signal in rural zones" } }
+];
+window.coDepts = coDepts;
+
 let region = {
   id: "colombia",
   flag: "🇨🇴",

@@ -1,8 +1,10 @@
-# X•ELECTION OS — Colombia 2026
+# ESMERALDA — Colombia Election Tracker 2026
 
-**Palantir-grade real-time election intelligence dashboard.**
+**CETI Control Room high-fidelity citizen deliverable (primary) + optional X•ELECTION OS intelligence layer.**
 
-Live X primary signals • Grok Better-Search Protocol v3.1 (heavy multi-variant research) • Official preconteo variance • Department hotspots • Full lineage + audit ontology.
+Bilingual (ES/EN) • 10:28 COT live clock • Heavy X primary data • 60/25/15 projection model • Full methodology + source trace.
+
+Private GitHub source • Public Vercel hosting • Zero ongoing cost for the tracker.
 
 First project: Colombian Presidential first round — May 31, 2026.
 
@@ -17,30 +19,125 @@ First project: Colombian Presidential first round — May 31, 2026.
 ## Quick Start (local)
 
 ```bash
-cd x-election-os-colombia
+cd /Users/cairo/ESMERALDA
 cp .env.example .env.local
-# Add your X_BEARER_TOKEN + XAI_API_KEY + strong INGEST_SECRET
+# Add your X_BEARER_TOKEN + XAI_API_KEY + strong INGEST_SECRET (only if using the optional Next.js intelligence APIs)
 
 npm install
 npm run dev
 ```
 
-Visit http://localhost:3000
+Visit http://localhost:3000 (shows the React dashboard shell for development).
 
-Click **HEAVY RESEARCH NOW** (you will need the INGEST_SECRET) to run the first real X + Grok enrichment.
+The **production citizen deliverable** is the self-contained `public/index.html` (copied from Colombia-Election-Tracker.html) — see Production Deployment below.
 
-## Production Deployment (Vercel via your connector)
+---
 
-1. Push this folder to a GitHub repo (or use Vercel CLI / your connector).
-2. In Vercel:
-   - Import the project
-   - Add the three env vars from `.env.example`
-   - Add a Postgres or Upstash KV integration (or use `@vercel/kv`)
-3. The `vercel.json` already contains the cron jobs (`*/4 * * * *` and `*/9 * * * *`).
-4. After first deploy, manually hit `https://your-domain.vercel.app/api/ingest?region=colombia&secret=YOUR_SECRET` once to seed the ontology.
-5. The dashboard will then stay live automatically.
+## Production Deployment — Private GitHub + Public Vercel (Election Day Clean)
 
-**Cron protection**: The ingest route checks the `secret` query param against `INGEST_SECRET`. Never expose this publicly.
+**Goal**: Private source-of-truth on GitHub + public, fast, zero-cost-at-scale Vercel URL serving the beautiful high-fidelity CETI Control Room tracker (`public/index.html`) at the root `/`.
+
+### 1. Create Private GitHub Repository (exact commands)
+
+**Option A — Using GitHub CLI (`gh`) — recommended if installed:**
+
+```bash
+cd /Users/cairo/ESMERALDA
+
+# Initialize git (if not already)
+git init
+git add .
+git commit -m "ESMERALDA v0.1 — production election day. CETI tracker at root via public/index.html + vercel.json rewrite. Bilingual 10:28 COT live prototype."
+
+git branch -M main
+
+# Create private repo on GitHub (replace YOUR_GITHUB_USERNAME)
+gh repo create esmeralda-election-os --private --source=. --remote=origin --push
+
+# Or for exact name "ESMERALDA":
+# gh repo create ESMERALDA --private --source=. --remote=origin --push
+```
+
+**Option B — Manual (no gh CLI):**
+
+1. Go to https://github.com/new
+2. Repository name: `esmeralda-election-os` (recommended) **or** `ESMERALDA`
+3. **Private** (critical)
+4. **Do NOT** initialize with README, .gitignore, or license (we have them locally)
+5. Click "Create repository"
+
+6. Back in terminal:
+
+```bash
+cd /Users/cairo/ESMERALDA
+
+git init
+git add .
+git commit -m "ESMERALDA v0.1 — production election day. CETI Control Room tracker served cleanly at root. Private repo + public Vercel."
+
+git branch -M main
+git remote add origin https://github.com/YOUR_GITHUB_USERNAME/esmeralda-election-os.git
+git push -u origin main
+```
+
+**Important**: `.gitignore` (just created) ensures `node_modules/`, `.env*`, `.next/`, `.vercel/` etc. are never pushed.
+
+### 2. Deploy to Vercel (Public URL, Private Source)
+
+**Prerequisites**:
+- Vercel account (free tier sufficient for this static+light API workload)
+- Vercel CLI: `npm i -g vercel` (or use `npx vercel`)
+
+**Recommended flow (preview first, then ship):**
+
+```bash
+cd /Users/cairo/ESMERALDA
+
+# Login (one time)
+vercel login
+
+# Preview deploy (generates a unique *.vercel.app URL for review)
+# Use this after any map improvements or content updates before shipping to prod
+npm run deploy:preview
+# or: npx vercel
+
+# Production ship (updates the primary public URL)
+npm run deploy:prod
+# or: npx vercel --prod
+```
+
+**Alternative (Git-connected — best for ongoing election updates):**
+1. In Vercel dashboard: "Add New Project" → "Import Git Repository"
+2. Select your private `esmeralda-election-os` (or ESMERALDA) repo
+3. Vercel auto-detects Next.js
+4. **Environment Variables** (from `.env.example` — only needed if you later enable the intelligence APIs):
+   - `X_BEARER_TOKEN`
+   - `XAI_API_KEY`
+   - `INGEST_SECRET` (strong random value — never expose)
+5. Deploy. The root URL will immediately serve the tracker thanks to the `rewrites` rule in `vercel.json`.
+6. (Optional) Add a custom domain later.
+
+**Key vercel.json behavior (already configured):**
+- `/` → serves `public/index.html` (the full beautiful bilingual CETI tracker)
+- `/api/*` → still available for future Grok/X intelligence layer (ingest, snapshot, verify)
+- Cron jobs remain commented (zero ongoing cost)
+- Proper CORS headers on APIs + cache headers on the tracker
+
+**After ship**:
+- Your public citizen URL will be something like: `https://esmeralda-election-os.vercel.app/`
+- It loads instantly, fully static, zero server cost for the tracker itself.
+- The 10:28 COT live clock, X-heavy data, bilingual toggle, methodology, and source trace are all embedded.
+
+**Preview before every prod ship** (map improvements, data refresh, etc.):
+Always run `npm run deploy:preview` (or `vercel`) first. Test the live URL. Only then `npm run deploy:prod`.
+
+**Rollback**: In Vercel dashboard → Deployments → promote a previous successful one to Production.
+
+### Notes for Election Day Production Cleanliness
+- The tracker is 100% self-contained (CDN Tailwind + Font Awesome + embedded data). No external API dependencies at runtime for the citizen view.
+- If you later want the full React + live Grok intelligence at a subpath, we can add a rewrite or route.
+- Never commit secrets. `.env.example` is the only safe file.
+- Update the heavy seed data by replacing `public/index.html` (re-copy from the authoritative `Colombia-Election-Tracker.html` after any hand edits) then preview → ship.
 
 ## Creative Low-Cost Model (the solution to "slow + expensive")
 
@@ -88,44 +185,28 @@ You keep the option for live when you need it. Perfect for election night monito
 
 ## High-Fidelity Standalone Tracker (current election-day deliverable)
 
-The production citizen-facing prototype is the self-contained single-file HTML at:
+**See the authoritative production deployment instructions above** ("Production Deployment — Private GitHub + Public Vercel").
 
-`Colombia-Election-Tracker.html`
+The citizen deliverable is `public/index.html` (authoritative source copy of `Colombia-Election-Tracker.html`).
 
-- Exact match to the CETI Control Room direction from your ESMERALDA handoff (dense ticker, Projected Leader hero, 3-col main grid with prominent X Primary Feed, hex-aware Geographic Pulse, Results + full Source-Trace reasoning).
-- Perfect bilingual ES/EN global toggle (no mixed text anywhere).
-- Live COT clock + simulation (currently running at ~10:28 COT, polls open ~2.5 hours).
-- All data from heavy Spanish X research + the documented 60/25/15 X-projection model with Westcol rural/coast adjustment.
-- Fully static (Tailwind CDN + custom CETI tokens) — zero build step, zero cost at scale.
+- Exact match to the CETI Control Room direction from your ESMERALDA handoff.
+- Perfect bilingual ES/EN, live COT clock, heavy X data, 60/25/15 projection model, full source traceability.
+- Fully static (Tailwind CDN + CETI tokens) — instant load, zero runtime cost.
 
-**Ready for Vercel (one-command deploy):**
-
-```bash
-cd /Users/cairo/ESMERALDA
-
-# The tracker is already prepared at public/index.html
-# This means your deployed site root will serve the exact beautiful prototype
-
-npx vercel --prod
-```
-
-After first deploy:
-- Link to (or create) your "x-election-os-colombia" project when prompted.
-- The production URL will show the tracker at root (because of public/index.html).
-- You can also access it at `https://your-project.vercel.app/Colombia-Election-Tracker.html` if you prefer the Next.js shell.
-
-The existing `vercel.json` already has the right headers and (commented) cron strategy. The heavy-seed static approach keeps it fast & free on election day.
+The `vercel.json` rewrite guarantees the root URL serves this exact file in production.
 
 ## Cost & rate limits (realistic for election night)
 
-- X API (Essential/Pro): ~$100-500/mo depending on volume during peak
-- Grok-4.3: ~$3-12 per heavy ingest (28-40 posts + synthesis). 4min cron = ~360 calls/day worst case.
-- Vercel KV + Cron: negligible on Pro plan.
+- X API (Essential/Pro): ~$100-500/mo depending on volume during peak (only if enabling live ingest later)
+- Grok-4.3: ~$3-12 per heavy ingest (28-40 posts + synthesis). Only on explicit opt-in or re-enabled cron.
+- Vercel (static + serverless functions): negligible on Hobby/Pro for this workload. The tracker itself costs $0 at any scale.
 
-This is production-viable for a high-stakes monitoring operation.
+This is production-viable and election-night hardened.
 
 ---
 
-**Framework v2.0** — Built for the Colombian election today. Extensible to any region.
+**ESMERALDA / Framework v2.0** — Built for the Colombian election (May 31, 2026). Extensible to any region.
 
-Every post is a signal. Grok turns it into verified ontology. The dashboard is just the beautiful viewport.
+Every post is a signal. Grok turns it into verified ontology. The tracker is the beautiful, self-contained citizen viewport.
+
+**Ship command (after preview):** `npm run deploy:prod` or `npx vercel --prod`

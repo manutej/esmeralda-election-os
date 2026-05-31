@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "X•ELECTION OS — Colombia 2026 | Live Primary Sources",
-  description: "Palantir-grade real-time election intelligence. X primary signals • Grok Better-Search Protocol v3.1 • Zero spin. First round • May 31, 2026",
+  title: "ESMERALDA — Colombia Election Tracker 2026 | CETI Control Room",
+  description: "High-fidelity bilingual Colombia 2026 election tracker (CETI). X primary signals • Heavy seed data • 10:28 COT live prototype. Private source, public Vercel. First round • May 31, 2026",
   icons: {
     icon: "/favicon.ico",
   },

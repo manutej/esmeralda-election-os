@@ -1,4 +1,10 @@
 {
+  "rewrites": [
+    // CRITICAL: Serve the high-fidelity CETI standalone tracker (public/index.html) at the production root URL.
+    // This ensures https://your-vercel-domain.vercel.app/ shows the beautiful bilingual Colombia Election Tracker
+    // exactly as the citizen deliverable. The Next.js app shell is bypassed at "/" while /api/* routes remain functional.
+    { "source": "/", "destination": "/index.html" }
+  ],
   "crons": [
     // DISABLED by default for cost reasons on election day.
     // The heavy Grok synthesis seed (loaded statically) is the recommended fast/cheap path.
@@ -15,10 +21,15 @@
         { "key": "Access-Control-Allow-Origin", "value": "*" },
         { "key": "Access-Control-Allow-Methods", "value": "GET,POST,OPTIONS" }
       ]
+    },
+    {
+      "source": "/index.html",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=60, s-maxage=300, stale-while-revalidate=60" }
+      ]
     }
   ],
-  // For the high-fidelity standalone tracker (public/index.html)
-  // When deploying this folder, the root URL will serve the exact CETI Control Room prototype.
-  // This is the current election-day citizen deliverable (updated to 10:28 COT).
-  "trailingSlash": false
+  // Production election-day configuration
+  "trailingSlash": false,
+  "cleanUrls": true
 }

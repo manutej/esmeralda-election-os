@@ -168,6 +168,23 @@
 .evt .hex:hover { transform: scale(1.05); }
 .evt .hex.selected { stroke: var(--gold-bright); stroke-width: 2.5; }
 
+/* Improved Geographic Pulse Map */
+.evt .dept-group { transition: filter .12s ease; }
+.evt .dept-group:hover { filter: brightness(1.15) saturate(1.1); }
+.evt .dept-group:hover circle { stroke: var(--gold-bright); stroke-width: 2; }
+.evt #map-tooltip {
+  box-shadow: 0 10px 30px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.04) inset;
+  backdrop-filter: blur(6px);
+  font-feature-settings: "tnum";
+  transition: opacity .08s ease;
+}
+.evt #map-tooltip .tooltip-accent {
+  height: 3px;
+  background: linear-gradient(to right, var(--emerald), var(--gold));
+  border-radius: 3px 3px 0 0;
+  margin: -1px -1px 6px -1px;
+}
+
 /* Table */
 .evt .results-row { border-bottom: 1px solid var(--border); transition: background .1s; }
 .evt .results-row:hover { background: var(--surface-2); }
@@ -342,6 +359,17 @@
         
         <!-- City bubbles positioned -->
         <div id="map-bubbles" class="absolute inset-0"></div>
+
+        <!-- Rich hover tooltip (CETI style - improved) -->
+        <div id="map-tooltip" 
+             class="hidden absolute z-50 pointer-events-none px-3 py-2.5 rounded-xl text-xs shadow-2xl border"
+             style="background: var(--surface); border-color: var(--border-2); color: var(--ink); min-width: 192px; max-width: 252px; box-shadow: 0 12px 32px rgba(0,0,0,0.5);">
+          <div class="tooltip-accent"></div>
+          <div id="tooltip-title" class="font-bold text-[13px] tracking-[-0.1px] mb-1"></div>
+          <div id="tooltip-lead" class="flex items-center gap-1.5 text-[12px] font-medium mb-0.5"></div>
+          <div id="tooltip-stats" class="text-[10.5px] text-[var(--dim)] mt-0.5 font-mono tracking-tight"></div>
+          <div id="tooltip-note" class="text-[10px] text-[var(--ink-2)] mt-1.5 leading-tight border-t border-[var(--border)] pt-1.5"></div>
+        </div>
       </div>
 
       <div class="flex items-center gap-4 mt-3 text-xs">
@@ -351,7 +379,7 @@
           <div class="flex items-center gap-1.5"><span style="width:9px;height:9px;border-radius:2px;background:var(--p-verde)"></span><span class="text-[var(--dim)]">Verde</span></div>
           <div class="flex items-center gap-1.5"><span style="width:9px;height:9px;border-radius:2px;background:var(--p-radical)"></span><span class="text-[var(--dim)]">Radical</span></div>
         </div>
-        <div class="ml-auto text-[10px] text-[var(--dim)] mono">Toca burbuja para detalle</div>
+        <div class="ml-auto text-[10px] text-[var(--dim)] mono">Hover / toca para detalle</div>
       </div>
     </div>
 
@@ -484,6 +512,21 @@ const PARTIES = {
   radical: { abbr: "Radical", full: { es: "Cambio Radical", en: "Cambio Radical" }, side: { es: "Centro-derecha", en: "Centre-right" }, color: "var(--p-radical)" },
   otros:   { abbr: "Otros", full: { es: "Otros / en blanco", en: "Others / blank" }, side: { es: "—", en: "—" }, color: "var(--p-otros)" }
 };
+
+// coDepts — 9 priority departments for PULSO GEOGRÁFICO (coHex/coDepts style)
+// id, bilingual name, lead party key, xProj (local leader %), margin (lead pts), rep (reporting %), variance, live flag, signal note
+const coDepts = [
+  { id: "atlantico", name: { es: "Atlántico", en: "Atlántico" }, city: "Barranquilla", x: 148, y: 66, r: 18, lead: "centro", xProj: 41.2, margin: 7.4, rep: 71, variance: +2.8, live: true, note: { es: "Efecto Westcol fuerte · Participación joven y rural alta", en: "Westcol effect strong · High youth & rural turnout" } },
+  { id: "antioquia", name: { es: "Antioquia", en: "Antioquia" }, city: "Medellín", x: 192, y: 115, r: 17, lead: "centro", xProj: 38.4, margin: 6.8, rep: 64, variance: +4.9, live: true, note: { es: "Movilización rural post-Westcol · Densidad testigos 2.3×", en: "Rural mobilization post-Westcol · 2.3× witness density" } },
+  { id: "santander", name: { es: "Santander", en: "Santander" }, city: "Bucaramanga", x: 258, y: 94, r: 14, lead: "centro", xProj: 36.1, margin: 3.2, rep: 53, variance: +1.7, live: false, note: { es: "Derecha consolidada · Espriella robando voto anti-sistema", en: "Right consolidated · Espriella stealing anti-system vote" } },
+  { id: "cundi", name: { es: "Cundinamarca / Bogotá", en: "Cundinamarca / Bogotá" }, city: "Bogotá D.C.", x: 232, y: 158, r: 19, lead: "pacto", xProj: 44.0, margin: 9.1, rep: 71, variance: +3.1, live: true, note: { es: "Alta participación juvenil · Bases populares Suba/Usme sólidas", en: "High youth turnout · Strong popular base in Suba/Usme" } },
+  { id: "valle", name: { es: "Valle del Cauca", en: "Valle del Cauca" }, city: "Cali", x: 148, y: 198, r: 15, lead: "verde", xProj: 35.3, margin: 4.2, rep: 58, variance: +0.9, live: false, note: { es: "Testigos densos 98% · Verde mantiene Cali metro", en: "98% witness density · Verde holding Cali metro" } },
+  { id: "meta", name: { es: "Meta", en: "Meta" }, city: "Villavicencio", x: 292, y: 178, r: 13, lead: "radical", xProj: 33.0, margin: 2.8, rep: 49, variance: -0.4, live: false, note: { es: "Llanos con señal radical estable", en: "Llanos stable Radical signal" } },
+  { id: "narino", name: { es: "Nariño", en: "Nariño" }, city: "Pasto", x: 132, y: 236, r: 12, lead: "pacto", xProj: 47.1, margin: 11.4, rep: 66, variance: +3.8, live: false, note: { es: "Participación rural +11 pts vs 2022 · Testigos completos", en: "Rural turnout +11pts vs 2022 · Full witness coverage" } },
+  { id: "bolivar", name: { es: "Bolívar", en: "Bolívar" }, city: "Cartagena", x: 115, y: 92, r: 11, lead: "pacto", xProj: 39.8, margin: 5.6, rep: 61, variance: +2.3, live: false, note: { es: "Costa con impulso Pacto · Colas ordenadas", en: "Coast with Pacto momentum · Orderly queues" } },
+  { id: "cauca", name: { es: "Cauca", en: "Cauca" }, city: "Popayán", x: 142, y: 222, r: 10, lead: "pacto", xProj: 42.6, margin: 7.9, rep: 44, variance: +1.4, live: false, note: { es: "Señal Pacto fuerte en zonas rurales", en: "Strong Pacto signal in rural zones" } }
+];
+window.coDepts = coDepts;
 
 let region = {
   id: "colombia",
@@ -767,57 +810,118 @@ function renderMetrics() {
   sent.style.color = region.sentiment >= 0 ? 'var(--good)' : 'var(--bad)';
 }
 
-// Pulse map (SVG leaf + bubbles matching screenshot aesthetic)
+// Enhanced Pulse map: Better Colombia overlay + rich hover tooltips (bilingual, live data)
 function renderPulseMap() {
   const svg = document.getElementById('pulse-svg');
-  if (!svg) return;
+  const bubblesContainer = document.getElementById('map-bubbles');
+  const tooltip = document.getElementById('map-tooltip');
+  if (!svg || !bubblesContainer || !tooltip) return;
+
+  // Clear previous
+  svg.innerHTML = '';
+  bubblesContainer.innerHTML = '';
+
+  // Improved recognizable Colombia country outline (simplified but much better than leaf)
   svg.innerHTML = `
     <defs>
-      <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-        <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="coloredBlur"/>
+      <filter id="mapglow" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="1.5"/>
       </filter>
     </defs>
-    <!-- Leaf / Colombia-ish outline -->
-    <path d="M110 40 Q180 18 260 42 Q320 68 348 128 Q362 188 312 232 Q228 262 142 218 Q78 168 110 40" 
-          fill="none" stroke="var(--emerald)" stroke-width="2.5" opacity="0.55"/>
-    
-    <!-- Bubbles (approx positions from screenshot) -->
-    <!-- Barranquilla -->
-    <g onclick="selectDept('atlantico')">
-      <circle cx="148" cy="72" r="18" fill="var(--p-pacto)" opacity="0.9"/>
-      <text x="148" y="76" text-anchor="middle" fill="#fff" font-family="var(--f-mono)" font-size="11" font-weight="700">41</text>
-    </g>
-    <!-- Medellín -->
-    <g onclick="selectDept('antioquia')">
-      <circle cx="192" cy="118" r="17" fill="var(--p-centro)" opacity="0.92"/>
-      <text x="192" y="122" text-anchor="middle" fill="#fff" font-family="var(--f-mono)" font-size="11" font-weight="700">38</text>
-    </g>
-    <!-- Bucaramanga -->
-    <g onclick="selectDept('santander')">
-      <circle cx="258" cy="98" r="15" fill="var(--p-centro)" opacity="0.88"/>
-      <text x="258" y="102" text-anchor="middle" fill="#fff" font-family="var(--f-mono)" font-size="10" font-weight="700">36</text>
-    </g>
-    <!-- Bogotá -->
-    <g onclick="selectDept('cundi')">
-      <circle cx="232" cy="162" r="19" fill="var(--p-pacto)" opacity="0.95"/>
-      <text x="232" y="166" text-anchor="middle" fill="#fff" font-family="var(--f-mono)" font-size="12" font-weight="700">44</text>
-    </g>
-    <!-- Cali -->
-    <g onclick="selectDept('valle')">
-      <circle cx="148" cy="198" r="16" fill="var(--p-verde)" opacity="0.9"/>
-      <text x="148" y="202" text-anchor="middle" fill="#fff" font-family="var(--f-mono)" font-size="11" font-weight="700">35</text>
-    </g>
-    <!-- Villavicencio -->
-    <g onclick="selectDept('meta')">
-      <circle cx="292" cy="182" r="14" fill="var(--p-radical)" opacity="0.85"/>
-      <text x="292" y="186" text-anchor="middle" fill="#fff" font-family="var(--f-mono)" font-size="10" font-weight="700">33</text>
-    </g>
-    <!-- Pasto -->
-    <g onclick="selectDept('narino')">
-      <circle cx="132" cy="238" r="13" fill="var(--p-pacto)" opacity="0.87"/>
-      <text x="132" y="242" text-anchor="middle" fill="#fff" font-family="var(--f-mono)" font-size="10" font-weight="700">47</text>
-    </g>
+    <!-- Main Colombia landmass (more accurate simplified shape) -->
+    <path d="M85 55 Q130 22 195 38 Q265 25 320 55 Q355 95 372 145 Q365 195 325 225 Q275 255 205 242 Q145 265 105 215 Q70 155 85 55" 
+          fill="#0F1E16" stroke="var(--emerald)" stroke-width="2.2" opacity="0.65"/>
+    <!-- Subtle internal department hints (light strokes) -->
+    <path d="M140 90 Q195 85 220 120" fill="none" stroke="var(--border)" stroke-width="0.8" opacity="0.4"/>
+    <path d="M175 140 Q230 155 255 190" fill="none" stroke="var(--border)" stroke-width="0.8" opacity="0.4"/>
+    <path d="M120 175 Q170 195 195 230" fill="none" stroke="var(--border)" stroke-width="0.8" opacity="0.4"/>
   `;
+
+  // Department data for interaction (extended from existing region + heavy signals)
+  const depts = [
+    { id: 'atlantico', name: {es:'Atlántico', en:'Atlántico'}, x:148, y:72,  lead:'pacto',   xproj:36.1, margin:2.1, note:{es:'Efecto Westcol fuerte en costa', en:'Strong Westcol effect on coast'}, color:'var(--p-pacto)' },
+    { id: 'antioquia', name: {es:'Antioquia', en:'Antioquia'}, x:192, y:118, lead:'centro',  xproj:38.4, margin:7.5, note:{es:'Espriella +7.8 rural post-Westcol', en:'Espriella +7.8 rural surge post-Westcol'}, color:'var(--p-centro)' },
+    { id: 'santander', name: {es:'Santander', en:'Santander'}, x:258, y:98,  lead:'centro',  xproj:38.7, margin:5.9, note:{es:'Derecha consolidada, Espriella robando votos', en:'Right consolidated, Espriella taking votes'}, color:'var(--p-centro)' },
+    { id: 'cundi',     name: {es:'Cundinamarca / Bogotá', en:'Cundinamarca / Bogotá'}, x:232, y:162, lead:'pacto',   xproj:43.7, margin:3.5, note:{es:'Alta participación joven y popular', en:'High youth + popular turnout'}, color:'var(--p-pacto)' },
+    { id: 'valle',     name: {es:'Valle del Cauca', en:'Valle del Cauca'}, x:148, y:198, lead:'verde',   xproj:40.9, margin:4.1, note:{es:'Verde mantiene Cali, Espriella sube en Jamundí', en:'Verde holds Cali, Espriella rising in Jamundí'}, color:'var(--p-verde)' },
+    { id: 'meta',      name: {es:'Meta', en:'Meta'}, x:292, y:182, lead:'radical', xproj:33.0, margin:4.0, note:{es:'Participación rural activa', en:'Active rural participation'}, color:'var(--p-radical)' },
+    { id: 'narino',    name: {es:'Nariño', en:'Nariño'}, x:132, y:238, lead:'pacto',   xproj:30.4, margin:3.3, note:{es:'Madrugar rural +11 vs 2022', en:'Rural early voting +11 vs 2022'}, color:'var(--p-pacto)' },
+  ];
+
+  // Create interactive bubbles + labels
+  depts.forEach(d => {
+    const wrap = document.createElement('div');
+    wrap.className = 'map-bubble';
+    wrap.style.left = d.x + 'px';
+    wrap.style.top = d.y + 'px';
+    wrap.style.width = '34px';
+    wrap.style.height = '34px';
+    wrap.style.background = d.color;
+    wrap.style.border = '2px solid #0B1510';
+    wrap.style.fontSize = '11px';
+    wrap.style.fontWeight = '700';
+    wrap.style.boxShadow = '0 0 0 3px var(--bg), 0 3px 10px rgba(0,0,0,0.5)';
+    wrap.textContent = Math.round(d.xproj);
+    wrap.dataset.dept = d.id;
+
+    // Hover handlers for rich tooltip
+    wrap.onmouseenter = (e) => showDeptTooltip(e, d);
+    wrap.onmouseleave = hideDeptTooltip;
+    wrap.onclick = () => selectDept(d.id);
+
+    bubblesContainer.appendChild(wrap);
+  });
+
+  // Update live count
+  const liveCount = document.getElementById('hex-live-count');
+  if (liveCount) liveCount.textContent = depts.filter(d => d.margin > 4).length;
+}
+
+function showDeptTooltip(e, dept) {
+  const tooltip = document.getElementById('map-tooltip');
+  if (!tooltip) return;
+
+  const lang = document.body.getAttribute('lang') || 'es';
+  const name = dept.name[lang] || dept.name.es;
+  const leadParty = window.EVT ? (window.EVT.parties || {})[dept.lead] : null;
+  const partyName = leadParty ? leadParty.full[lang] : dept.lead;
+
+  document.getElementById('tooltip-title').textContent = name;
+  document.getElementById('tooltip-lead').innerHTML = `
+    <span style="width:10px;height:10px;border-radius:2px;background:${dept.color};display:inline-block;"></span>
+    <span class="font-semibold">${partyName}</span>
+    <span class="font-mono ml-auto">${dept.xproj.toFixed(1)}%</span>
+  `;
+  document.getElementById('tooltip-stats').innerHTML = `+${dept.margin} margen • Actividad alta`;
+  document.getElementById('tooltip-note').textContent = dept.note[lang] || '';
+
+  // Position tooltip near cursor / element, inside the card
+  const rect = e.currentTarget.getBoundingClientRect();
+  const mapRect = e.currentTarget.closest('.relative').getBoundingClientRect();
+
+  tooltip.style.left = (rect.left - mapRect.left + 38) + 'px';
+  tooltip.style.top = (rect.top - mapRect.top - 10) + 'px';
+  tooltip.classList.remove('hidden');
+  tooltip.classList.add('flex', 'flex-col');
+}
+
+function hideDeptTooltip() {
+  const tooltip = document.getElementById('map-tooltip');
+  if (tooltip) {
+    tooltip.classList.add('hidden');
+    tooltip.classList.remove('flex', 'flex-col');
+  }
+}
+
+function selectDept(id) {
+  // Bonus: clicking a dept can highlight related key race or flash the X feed
+  const keyRaces = document.getElementById('key-races');
+  if (keyRaces) {
+    keyRaces.style.transition = 'box-shadow 0.2s';
+    keyRaces.style.boxShadow = '0 0 0 3px var(--emerald)';
+    setTimeout(() => { keyRaces.style.boxShadow = 'none'; }, 900);
+  }
+  // Future: could filter X feed or update other panels
 }
 
 // Hex cartogram (simplified visual in same card area if needed)

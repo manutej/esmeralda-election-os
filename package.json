@@ -1,12 +1,15 @@
 {
-  "name": "x-election-os-colombia",
+  "name": "esmeralda",
   "version": "0.1.0",
   "private": true,
+  "description": "ESMERALDA — Colombia Election Tracker 2026 (CETI Control Room). High-fidelity bilingual static citizen deliverable served at root. Optional Next.js API intelligence layer for future Grok/X enrichment.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "deploy:preview": "vercel",
+    "deploy:prod": "vercel --prod"
   },
   "dependencies": {
     "@vercel/kv": "^3.0.0",
