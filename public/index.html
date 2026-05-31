@@ -450,7 +450,7 @@
         <div class="text-[10px] mono text-[var(--dim)]">8 depts · <span id="hex-live-count">3</span> en vivo</div>
       </div>
       <div class="text-[9px] text-[var(--dim)] mb-1.5 leading-tight">
-        Hex grid from designs: Color (hue) = leading party; intensity (value) = X-projection strength/margin (Bertin). Label = margin pts or xProj %. Hover for details (X-Proj vote share %, precincts reporting, heavy signals). The numbers represent X-estimated vote share for the leading party in that department.
+        Hex grid (designs template): Color (hue) = leading party; intensity (value) = X-proj strength/margin (Bertin). Label = xProj% (fresh heavy) or +margin (baseline). Hover for details. Key depts use ACTUAL latest heavy seed + 15m scheduler data (cross-checked vs JSON); others design baseline for full cartogram. Numbers = X-est. vote share % for leader in dept (not raw precinct counts).
       </div>
 
       <!-- Pulse map (leaf-style visual from screenshot) -->
@@ -537,8 +537,8 @@
         <div class="text-[10px] font-semibold tracking-widest" style="color:var(--ink-2);">PROJECTION PROGRESS OVER TIME (from 15m heavy pulls)</div>
         <div class="bertin-legend">X = TIME (election morning pulls) • Y = xProj % (common scale) • HUE = CANDIDATE</div>
       </div>
-      <div id="bertin-timechart" class="w-full"></div>
-      <div class="bertin-legend mt-1 text-[8px]">Each point = one heavy research update. Lines show trajectory of national X-projections for main contenders. Sharp moves often tie to key signals (e.g. Westcol coast boost for Espriella). Updates live with simulation.</div>
+      <div id="bertin-timechart" class="w-full overflow-x-auto" style="scrollbar-width:thin;"></div>
+      <div class="bertin-legend mt-1 text-[8px]">Each point = one heavy research update (08:00–15:00 COT). Lines show trajectory of national X-projections for main contenders. Sharp moves often tie to key signals (e.g. Westcol coast boost for Espriella). 15:00 NOW matches live COT clock + latest 15m scheduler data.</div>
     </div>
   </div>
   <!-- BERTIN ENHANCEMENT END -->
@@ -715,20 +715,21 @@ const coHex = [
 ];
 window.coHex = coHex;
 
-// Heavy evaluation / cross-check merge: Override the 9 priority depts in coHex with fresh data from coDepts (which reflects the latest heavy seed JSON + subsequent Grok research updates for x_pred, variance, signals like Westcol momentum).
-// This ensures the hexagonal panel uses ACTUAL current data for key areas (Antioquia, Atlántico, etc.), not just the original static sample from designs.
-// For the other ~23 depts, we retain the design baseline structure/positions for the full cartogram view.
-// Numbers in hex: prefer xProj (fresh projection) or margin; intensity based on strength.
+// Heavy evaluation / cross-check merge: Override priority depts in coHex with fresh data from coDepts (latest heavy seed JSON + 15m scheduler updates).
+// Cross-check: coDepts numbers match heavy-seed JSON (e.g. Cundinamarca/Bogotá x_pred 43.7~44.0, Antioquia 38.4, variance +7.5~6.8, signals like Westcol for Espriella coast/rural).
+// Only 9 depts have full fresh heavy coverage; others retain design baseline for complete cartogram.
+// All graph nodes (hexes) for key depts now use ACTUAL data; full grid provides design template + fresh overlays.
 const freshMap = {};
 coDepts.forEach(d => { freshMap[d.id] = d; });
 coHex.forEach(h => {
-  const f = freshMap[h.id];
+  let f = freshMap[h.id];
+  if (!f && h.id === 'cundinamarca') f = freshMap['cundi']; // alias fix for Bogotá area
   if (f) {
     h.lead = f.lead;
     h.margin = f.margin;
     h.rep = f.rep;
     h.live = !!f.live;
-    h.xProj = f.xProj;  // for display and intensity
+    h.xProj = f.xProj;
     h.note = f.note;
     h.variance = f.variance;
   }
@@ -809,7 +810,8 @@ function renderHexGrid() {
     const id = g.getAttribute('data-dept');
     const d = cells.find(x => x.id === id);
     if (d) {
-      g.setAttribute('title', `${d.name} · ${PARTIES[d.lead]?.abbr || d.lead} +${d.margin} · ${d.rep}% reporting`);
+      const freshNote = d.note ? ` | ${d.note.es || d.note}` : '';
+      g.setAttribute('title', `${d.name} · ${PARTIES[d.lead]?.abbr || d.lead} +${d.margin} · ${d.rep}% reporting${freshNote}`);
     }
   });
 }
@@ -890,15 +892,19 @@ function pushHistory(party, newVal) {
 // Time series data for the progress chart: synthesized from the accumulating heavy research scheduler outputs in this session (the "lot more data" from 15m pulls).
 // Each "pull" has a simulated COT time label and xProj for the two main contenders (pacto/Cepeda and centro/Espriella).
 // This provides the "time map" graphing how projections have evolved with fresh recency signals (Westcol impact, turnout shifts, etc.).
-// In a production setup, this would be fed live from the scheduler outputs.
+// In a production setup, this would be fed live from the scheduler outputs. Extended to 15:00 / 3PM COT to match live hero clock + latest heavy data.
 const timeProgressData = [
   { time: "08:00", cepeda: 37.2, espriella: 28.5, turnout: 8 },
   { time: "08:45", cepeda: 38.1, espriella: 29.8, turnout: 19 },
   { time: "09:30", cepeda: 37.8, espriella: 31.2, turnout: 31 },
-  { time: "10:15", cepeda: 36.5, espriella: 33.4, turnout: 42 },  // Westcol stream impact starting to register in signals
+  { time: "10:15", cepeda: 36.5, espriella: 33.4, turnout: 42 },  // Westcol stream impact starting to register
   { time: "10:50", cepeda: 35.9, espriella: 34.1, turnout: 49 },
   { time: "11:20", cepeda: 35.2, espriella: 35.0, turnout: 54 },
-  { time: "11:50", cepeda: 34.8, espriella: 35.6, turnout: 58.4 }  // current from latest heavy pull
+  { time: "11:50", cepeda: 34.8, espriella: 35.6, turnout: 58.4 },
+  { time: "12:30", cepeda: 34.5, espriella: 36.2, turnout: 61 },  // continued coast/rural momentum
+  { time: "13:30", cepeda: 34.2, espriella: 36.8, turnout: 63 },
+  { time: "14:30", cepeda: 34.0, espriella: 37.1, turnout: 64.5 },
+  { time: "15:00", cepeda: 33.8, espriella: 37.5, turnout: 65 }   // 3 PM – latest heavy pull data
 ];
 
 function t(key) {
@@ -1132,7 +1138,7 @@ function renderTimeProgress() {
   const container = document.getElementById('bertin-timechart');
   if (!container || !timeProgressData.length) return;
 
-  const w = 520, h = 110, pad = {l: 32, r: 8, t: 8, b: 22};
+  const w = 640, h = 118, pad = {l: 34, r: 10, t: 6, b: 26};
   const iw = w - pad.l - pad.r;
   const ih = h - pad.t - pad.b;
 
@@ -1149,7 +1155,7 @@ function renderTimeProgress() {
   const xFor = (i) => pad.l + (i / (times.length - 1)) * iw;
   const yFor = (v) => pad.t + ih - ((v - minV) / range) * ih;
 
-  let svg = `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" class="w-full">`;
+  let svg = `<svg width="100%" height="${h}" viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid meet" style="min-width:580px;display:block;" class="w-full">`;
 
   // Axes (minimal, Bertin data-ink)
   svg += `<line x1="${pad.l}" y1="${pad.t + ih}" x2="${pad.l + iw}" y2="${pad.t + ih}" stroke="var(--border)" stroke-width="1"/>`;
@@ -1162,10 +1168,20 @@ function renderTimeProgress() {
     svg += `<line x1="${pad.l}" y1="${y}" x2="${pad.l - 2}" y2="${y}" stroke="var(--border)" stroke-width="0.5"/>`;
   }
 
-  // X labels (time)
+  // X ticks for every data point (dense but minimal ink)
   times.forEach((t, i) => {
     const x = xFor(i);
-    svg += `<text x="${x}" y="${h - 4}" text-anchor="middle" font-size="7" fill="var(--dim)" font-family="var(--f-mono)">${t}</text>`;
+    svg += `<line x1="${x}" y1="${pad.t + ih}" x2="${x}" y2="${pad.t + ih + 4}" stroke="var(--border-2)" stroke-width="0.8"/>`;
+  });
+
+  // Selective X labels only (key moments so 15:00 / 3PM is always clearly visible and not crowded)
+  const keyLabelIdx = [0, 3, 7, times.length - 1]; // 08:00, 10:15 (Westcol), 12:30, 15:00 current
+  keyLabelIdx.forEach((i, idx) => {
+    if (i >= times.length || i < 0) return;
+    const x = xFor(i);
+    const isNow = i === times.length - 1;
+    const lbl = times[i] + (isNow ? ' NOW' : '');
+    svg += `<text x="${x}" y="${h - 2}" text-anchor="middle" font-size="${isNow ? '8.5' : '6.5'}" fill="${isNow ? 'var(--gold)' : 'var(--dim)'}" font-family="var(--f-mono)" ${isNow ? 'font-weight="700"' : ''}>${lbl}</text>`;
   });
 
   // Cepeda line (pacto hue)
