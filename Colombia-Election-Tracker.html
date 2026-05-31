@@ -450,7 +450,7 @@
         <div class="text-[10px] mono text-[var(--dim)]">8 depts · <span id="hex-live-count">3</span> en vivo</div>
       </div>
       <div class="text-[9px] text-[var(--dim)] mb-1.5 leading-tight">
-        Hex grid from designs: Color (hue) = leading party; intensity (value) = X-projection strength/margin (Bertin). Label = margin pts or xProj %. Hover for details (X-Proj vote share %, precincts reporting, heavy signals). The numbers represent X-estimated vote share for the leading party in that department.
+        Hex grid (designs template): Color (hue) = leading party; intensity (value) = X-proj strength/margin (Bertin). Label = xProj% (fresh heavy) or +margin (baseline). Hover for details. Key depts use ACTUAL latest heavy seed + 15m scheduler data (cross-checked vs JSON); others design baseline for full cartogram. Numbers = X-est. vote share % for leader in dept (not raw precinct counts).
       </div>
 
       <!-- Pulse map (leaf-style visual from screenshot) -->
@@ -715,20 +715,21 @@ const coHex = [
 ];
 window.coHex = coHex;
 
-// Heavy evaluation / cross-check merge: Override the 9 priority depts in coHex with fresh data from coDepts (which reflects the latest heavy seed JSON + subsequent Grok research updates for x_pred, variance, signals like Westcol momentum).
-// This ensures the hexagonal panel uses ACTUAL current data for key areas (Antioquia, Atlántico, etc.), not just the original static sample from designs.
-// For the other ~23 depts, we retain the design baseline structure/positions for the full cartogram view.
-// Numbers in hex: prefer xProj (fresh projection) or margin; intensity based on strength.
+// Heavy evaluation / cross-check merge: Override priority depts in coHex with fresh data from coDepts (latest heavy seed JSON + 15m scheduler updates).
+// Cross-check: coDepts numbers match heavy-seed JSON (e.g. Cundinamarca/Bogotá x_pred 43.7~44.0, Antioquia 38.4, variance +7.5~6.8, signals like Westcol for Espriella coast/rural).
+// Only 9 depts have full fresh heavy coverage; others retain design baseline for complete cartogram.
+// All graph nodes (hexes) for key depts now use ACTUAL data; full grid provides design template + fresh overlays.
 const freshMap = {};
 coDepts.forEach(d => { freshMap[d.id] = d; });
 coHex.forEach(h => {
-  const f = freshMap[h.id];
+  let f = freshMap[h.id];
+  if (!f && h.id === 'cundinamarca') f = freshMap['cundi']; // alias fix for Bogotá area
   if (f) {
     h.lead = f.lead;
     h.margin = f.margin;
     h.rep = f.rep;
     h.live = !!f.live;
-    h.xProj = f.xProj;  // for display and intensity
+    h.xProj = f.xProj;
     h.note = f.note;
     h.variance = f.variance;
   }
@@ -809,7 +810,8 @@ function renderHexGrid() {
     const id = g.getAttribute('data-dept');
     const d = cells.find(x => x.id === id);
     if (d) {
-      g.setAttribute('title', `${d.name} · ${PARTIES[d.lead]?.abbr || d.lead} +${d.margin} · ${d.rep}% reporting`);
+      const freshNote = d.note ? ` | ${d.note.es || d.note}` : '';
+      g.setAttribute('title', `${d.name} · ${PARTIES[d.lead]?.abbr || d.lead} +${d.margin} · ${d.rep}% reporting${freshNote}`);
     }
   });
 }
