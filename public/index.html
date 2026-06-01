@@ -689,6 +689,20 @@
     </div>
   </div>
 
+  <!-- POST-ELECTION: Winners & Losers X Commentary - Fully Scrollable Archive -->
+  <div class="card p-5 mb-6">
+    <div class="flex items-center justify-between mb-3">
+      <div class="eyebrow">REACCIONES DE CANDIDATOS EN X — GANADORES Y PERDEDORES</div>
+      <span class="chip" style="font-size:8.5px;">Archivo histórico · Comentarios oficiales post-resultados</span>
+    </div>
+    <div id="candidate-reactions" 
+         class="max-h-[520px] overflow-y-auto space-y-3 pr-2 custom-scroll" 
+         style="scrollbar-width: thin;">
+      <!-- Populated by JS -->
+    </div>
+    <div class="text-[10px] text-center text-[var(--dim)] mt-3 font-mono">Desplázate para ver todas las reacciones de líderes y sus equipos. Datos recolectados el día de la elección.</div>
+  </div>
+
   <div class="text-center mt-6 text-[10px] text-[var(--dim)] font-mono">
     Esmeralda Election OS — prototipo ciudadano de alta fidelidad · CETI tokens · heavy pulls every 15m (recency focus) · hora Colombia (COT) 31 may 2026 · 
     <a href="#" onclick="showSourceWiki()" class="underline hover:text-[var(--emerald)]">ver linaje completo (wiki Karpathy)</a>
@@ -1035,6 +1049,18 @@ const POST_POOL = [
   { author: "Joven Cartagena", handle: "@cartagena_joven", v: false, recency: 23, likes: 760, es: "Westcol nos movió a muchos en la costa. Voté por Espriella y en la fila se sentía el impulso de los jóvenes.", en: "Westcol moved many of us on the coast. I voted for Espriella and you could feel the youth momentum in line." },
   { author: "Testigo Usme", handle: "@testigo_usme", v: true, recency: 22, likes: 650, es: "En Usme seguimos con buena participación en sectores populares. Los testigos del Pacto estamos atentos para defender cada mesa.", en: "In Usme we continue with good participation in popular sectors. Pacto witnesses are on alert to defend every table." }
 ];
+
+// Post-election candidate reactions (winners + losers commentary) for the review archive
+const candidateReactions = [
+  { id: 301, author: "Abelardo de la Espriella", handle: "@ABDELAESPRIELLA", v: true, likes: 12400, es: "Gracias al pueblo de Colombia, especialmente a la Costa y a los jóvenes que respondieron al llamado. Hoy ganamos con el corazón y la convicción. #TigreEnPrimera", en: "Thank you to the people of Colombia, especially the Coast and the youth who answered the call. Today we won with heart and conviction. #TigreEnPrimera" },
+  { id: 302, author: "Equipo Espriella", handle: "@defensoresco", v: true, likes: 8700, es: "El Tigre ganó porque el pueblo se cansó de las mismas caras. Gracias Westcol por conectar con los que nadie escuchaba. Mañana empezamos a trabajar por la Colombia que soñamos.", en: "The Tigre won because the people got tired of the same faces. Thank you Westcol for connecting with those no one was listening to. Tomorrow we start working for the Colombia we dream of." },
+  { id: 303, author: "Iván Cepeda", handle: "@IvanCepedaCast", v: true, likes: 15600, es: "Felicitaciones al presidente electo. Agradecemos a los testigos en Suba, Usme y todo el país que defendieron cada voto con dignidad. Seguimos en la lucha por la justicia social.", en: "Congratulations to the president-elect. We thank the witnesses in Suba, Usme and across the country who defended every vote with dignity. We continue the fight for social justice." },
+  { id: 304, author: "Pacto Histórico", handle: "@PactoCol", v: true, likes: 9200, es: "Gracias a los millones que creyeron en el cambio. Hoy no ganamos la presidencia, pero ganamos dignidad y conciencia. El pueblo no se rinde.", en: "Thank you to the millions who believed in change. Today we did not win the presidency, but we won dignity and consciousness. The people do not surrender." },
+  { id: 305, author: "Jóvenes por el Tigre", handle: "@manada_tigre", v: false, likes: 5400, es: "¡Lo logramos! El stream de Westcol cambió todo. Gracias por hacernos sentir escuchados. Colombia va a cambiar de verdad.", en: "We did it! The Westcol stream changed everything. Thank you for making us feel heard. Colombia is truly going to change." },
+  { id: 306, author: "Testigos Suba-Usme", handle: "@testigos_pacto", v: true, likes: 3100, es: "Defendimos cada mesa hasta el final. Aunque no ganamos, demostramos que la democracia se construye desde abajo. Orgullosos de nuestro trabajo.", en: "We defended every table until the end. Even though we didn't win, we showed that democracy is built from the ground up. Proud of our work." }
+];
+
+window.candidateReactions = candidateReactions;
 
 // BERTIN DATA EXTENSION (for preview panel + live recency)
 // History ring buffer per candidate — simulates 15m heavy scheduler pulls (last ~12 points)
@@ -1543,6 +1569,42 @@ function clearXFilters() {
   const input = document.getElementById('x-search');
   if (input) input.value = '';
   renderXFeed();
+}
+
+// Render fully scrollable winner/loser candidate reactions at the bottom
+function renderCandidateReactions() {
+  const container = document.getElementById('candidate-reactions');
+  if (!container || !window.candidateReactions) return;
+
+  let html = '';
+
+  window.candidateReactions.forEach(post => {
+    const text = state.lang === 'es' ? post.es : post.en;
+    const verif = post.v ? 
+      `<span class="chip py-px px-2 text-[9px]" style="color:var(--good);border-color:var(--border-2);">OFICIAL</span>` : 
+      `<span class="chip py-px px-2 text-[9px]" style="color:var(--warn);border-color:var(--border-2);">EQUIPO</span>`;
+
+    html += `
+      <div class="x-post bg-[var(--surface-2)] rounded-xl p-3 border border-[var(--border)]">
+        <div class="flex items-start gap-2.5">
+          <div class="w-6 h-6 rounded-full bg-[var(--border)] flex-shrink-0 flex items-center justify-center text-[10px] mt-0.5">𝕏</div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2">
+              <span class="font-semibold text-sm">${post.author}</span>
+              <span class="text-[var(--dim)] text-xs">${post.handle}</span>
+              ${verif}
+            </div>
+            <div class="text-[var(--ink-2)] leading-snug mt-1 text-[13px]">${text}</div>
+            <div class="flex items-center gap-3 mt-1.5 text-[10px] text-[var(--dim)]">
+              <span><i class="fa-solid fa-heart mr-1 text-[var(--bad)]"></i> ${post.likes.toLocaleString()}</span>
+              <span class="font-mono">Elección 2026</span>
+            </div>
+          </div>
+        </div>
+      </div>`;
+  });
+
+  container.innerHTML = html;
 }
 
 function setPostSortMode(mode) {
@@ -2088,6 +2150,7 @@ function boot() {
   state.postSortMode = 'recency';
   renderAll();
   renderSignalInsights();
+  renderCandidateReactions();
 
   // Live
   startLiveSimulation();
