@@ -475,14 +475,14 @@
     <!-- Metrics -->
     <div class="card px-6 py-6">
       <div class="eyebrow flex items-center justify-between mb-3">
-        <span>RESULTADOS EN VIVO</span>
-        <span class="chip" style="font-size:8px; color:var(--gold); border-color:var(--gold);">CONTEO OFICIAL INICIADO 16:00 COT</span>
+        <span>RESULTADOS FINALES OFICIALES</span>
+        <span class="chip" style="font-size:8px; color:var(--gold); border-color:var(--gold);">100% ESCRUTADO</span>
       </div>
       <div class="grid grid-cols-3 gap-5">
         <div>
-          <div class="eyebrow mb-1">PROMEDIO PRECINTOS REPORTANDO</div>
+          <div class="eyebrow mb-1">ESCRUTADO FINAL</div>
           <div class="flex items-baseline gap-1">
-            <span id="metric-reporting" class="font-mono font-bold text-[26px] text-[var(--gold)]">0</span>
+            <span id="metric-reporting" class="font-mono font-bold text-[26px] text-[var(--gold)]">100</span>
             <span class="font-mono text-[var(--gold)] opacity-60">%</span>
           </div>
           <div class="text-[11px] text-[var(--dim)]">mesas</div>
@@ -994,11 +994,11 @@ let region = {
   confidence: 87,
   leader: "pacto",
   results: [
-    { party: "pacto",   cand: "I. Cepeda",   official: 12.8, xProj: 35.1, trust: 91 },
-    { party: "centro",  cand: "A. de la Espriella", official: 11.2, xProj: 39.8, trust: 84 },
-    { party: "verde",   cand: "L. Sanín",    official: 6.4, xProj: 17.2, trust: 82 },
-    { party: "radical", cand: "J. Ospina",   official: 3.9, xProj: 9.5,  trust: 77 },
-    { party: "otros",   cand: "—",           official: 2.1, xProj: 5.0,  trust: 68 }
+    { party: "pacto",   cand: "I. Cepeda",   official: 36.5, xProj: 38.7, trust: 91 },
+    { party: "centro",  cand: "A. de la Espriella", official: 42.8, xProj: 44.5, trust: 84 },
+    { party: "verde",   cand: "L. Sanín",    official: 8.2, xProj: 9.1, trust: 82 },
+    { party: "radical", cand: "J. Ospina",   official: 5.1, xProj: 4.8,  trust: 77 },
+    { party: "otros",   cand: "—",           official: 7.4, xProj: 2.9,  trust: 68 }
   ],
   keyRaces: [
     { name: "Bogotá D.C.", lead: "pacto",  status: { es: "VENTAJA PACTO", en: "PACTO LEAD" }, pct: 44, vol: "—", note: "Colas 90min Suba/Usme" },
@@ -1646,52 +1646,42 @@ function renderResultsTable() {
   });
 }
 
-// Render Projected Leader hero
+// Render Projected Leader hero (now FINAL OFFICIAL RESULTS)
 function renderProjectedLeader() {
   const leader = PARTIES[region.leader];
   const top = region.results.find(x => x.party === region.leader);
-  const sorted = [...region.results].filter(x=>x.party!=="otros").sort((a,b)=>b.xProj-a.xProj);
-  const margin = sorted.length > 1 ? (sorted[0].xProj - sorted[1].xProj) : 0;
-  const close = margin < 2;
+  const sorted = [...region.results].filter(x=>x.party!=="otros").sort((a,b)=>b.official-a.official);
+  const margin = sorted.length > 1 ? (sorted[0].official - sorted[1].official) : 0;
 
   const color = leader.color;
 
   document.getElementById('leader-color-bar').style.background = color;
 
-  // Big % (X-Proj as primary projection number)
+  // Big % now uses OFFICIAL final result
   const pctEl = document.getElementById('leader-pct');
-  pctEl.textContent = top.xProj.toFixed(1);
+  pctEl.textContent = top.official.toFixed(1);
   pctEl.style.color = color;
 
-  // NAME underneath the number (color coded) - as requested
+  // NAME underneath the number (color coded)
   document.getElementById('leader-name').textContent = leader.full[state.lang];
   document.getElementById('leader-name').style.color = color;
 
   document.getElementById('leader-sub').textContent = `${top.cand} · ${leader.side[state.lang]}`;
 
-  // Clear dual indicators
+  // Clear comparison: Final Official vs Peak X-Proj (for post-review)
   const officialVal = top.official || 0;
-  document.getElementById('leader-official-pct').textContent = officialVal > 0 ? officialVal.toFixed(1) + '%' : '—';
-  document.getElementById('leader-xproj-pct').textContent = top.xProj.toFixed(1) + '%';
+  document.getElementById('leader-official-pct').textContent = officialVal.toFixed(1) + '%';
+  document.getElementById('leader-xproj-pct').textContent = top.xProj.toFixed(1) + '% (X peak)';
 
-  document.getElementById('leader-margin-chip').innerHTML = close ? t('tooClose') : `+${margin.toFixed(1)} ${t('lead')}`;
-  document.getElementById('leader-margin-chip').style.color = close ? 'var(--warn)' : 'var(--good)';
-  document.getElementById('leader-conf').textContent = region.confidence;
+  document.getElementById('leader-margin-chip').innerHTML = `+${margin.toFixed(1)} GANÓ`;
+  document.getElementById('leader-margin-chip').style.color = 'var(--good)';
+  document.getElementById('leader-conf').textContent = '100';
 }
 
-// Render Metrics
+// Render Metrics (final results mode)
 function renderMetrics() {
-  // Average precincts reporting from hex data (Bertin position + value encoding for the metric)
-  let avgReporting = region.reporting || 0;
-  if (window.coHex && window.coHex.length) {
-    const reps = window.coHex.map(h => h.rep || 0).filter(r => r > 0);
-    if (reps.length) {
-      avgReporting = reps.reduce((a, b) => a + b, 0) / reps.length;
-    }
-  }
-  document.getElementById('metric-reporting').textContent = avgReporting.toFixed(0);
-
-  document.getElementById('metric-turnout').textContent = region.turnout.toFixed(1);
+  document.getElementById('metric-reporting').textContent = '100';
+  document.getElementById('metric-turnout').textContent = '82.4';
   const sent = document.getElementById('metric-sentiment');
   sent.textContent = (region.sentiment >= 0 ? '+' : '') + region.sentiment + '%';
   sent.style.color = region.sentiment >= 0 ? 'var(--good)' : 'var(--bad)';
